@@ -445,6 +445,8 @@
     font-family: inherit; font-size: 2.8vh; font-weight: 600; text-align: left; cursor: pointer; outline: none; }
   .cbtn:focus { border-color: var(--modal-ring, #fff); box-shadow: 0 0 0 0.5vh var(--modal-ring, #fff); }
   #clean .toggle { display: flex; width: 100%; margin: 1vh 0; }
+  .cbar { display: flex; gap: 2vh; margin: 1.2vh 0; }
+  .cbar .cbtn { flex: 1; width: auto; margin: 0; text-align: center; }
   #themes, #list, #options { grid-template-columns: repeat(5, minmax(0, 1fr)); }
 
   /* Cartes d'aperçu (comme les thèmes de GitLab) : un rectangle, un titre, une coche si choisi */
@@ -1159,19 +1161,24 @@
       : "Repère les applis préinstallées inutiles (constructeur, télémétrie...) pour les désactiver. Rien n'est supprimé : tout peut être réactivé.");
     if (clean.busy) text = "Connexion à l'ADB de la TV... Si une fenêtre s'affiche, accepte-la avec la télécommande (coche « Toujours autoriser »).";
     if (text) box.appendChild(make('p', null, text));
-    box.appendChild(cleanButton('clean:scan', clean.found ? 'Scanner de nouveau' : 'Scanner la TV',
+    // Les boutons d'action sont sur une seule ligne, au-dessus de la liste.
+    var bar = make('div', 'cbar');
+    bar.appendChild(cleanButton('clean:scan', clean.found ? 'Scanner de nouveau' : 'Scanner la TV',
       function () { if (!clean.busy) scanClean(); }));
     if (clean.found) {
       var active = clean.found.filter(function (a) { return a.state === 'active'; });
       var off = clean.found.length - active.length;
-      if (!clean.found.length) box.appendChild(make('p', null, "Aucune appli de la liste connue n'a été trouvée sur cette TV."));
       if (active.length) {
-        box.appendChild(cleanButton('clean:apply', 'Tout désactiver (' + active.length + ')',
+        bar.appendChild(cleanButton('clean:apply', 'Tout désactiver (' + active.length + ')',
           function () { runClean('disable', ''); }));
       }
       if (off) {
-        box.appendChild(cleanButton('clean:restore', 'Tout réactiver (' + off + ')', function () { runClean('enable', ''); }));
+        bar.appendChild(cleanButton('clean:restore', 'Tout réactiver (' + off + ')', function () { runClean('enable', ''); }));
       }
+    }
+    box.appendChild(bar);
+    if (clean.found) {
+      if (!clean.found.length) box.appendChild(make('p', null, "Aucune appli de la liste connue n'a été trouvée sur cette TV."));
       clean.found.forEach(function (a) { box.appendChild(cleanRow(a)); });
     }
     if (keepFocus) focusPkg(box, keepFocus);
@@ -1505,7 +1512,7 @@
 
   // Les éléments sélectionnables du contexte courant (hors roue).
   function navItems() {
-    var sel = settingsOpen ? '#themes .card, #options .toggle, #list .card, #clean .cbtn' : '#apps .app, #layoutbar button';
+    var sel = settingsOpen ? '#themes .card, #options .toggle, #list .card, #clean .cbtn, #clean .toggle' : '#apps .app, #layoutbar button';
     return Array.prototype.slice.call(document.querySelectorAll(sel)).filter(function (el) {
       return el.getClientRects().length > 0;            // les boutons de disposition n'existent que dans le thème de base
     });
