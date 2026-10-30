@@ -2,6 +2,8 @@
 
 Un écran d'accueil sur mesure pour Android TV. Il remplace le launcher d'origine de la télé par quelque chose de plus beau et de plus personnel : l'heure et la date en grand, les applications bien rangées, et un thème choisi parmi plusieurs ambiances.
 
+L'appli peut aussi s'installer **uniquement pour alléger la télé** : son outil de nettoyage scanne les applications préinstallées, repère celles qui sont inutiles, gourmandes ou qui envoient des données (télémétrie), puis les désactive en un clic. Le nettoyage fait, il est possible de revenir au launcher d'origine de la télé : les applications désactivées le restent.
+
 ![Thème par défaut](docs/screenshots/defaut.jpg)
 
 ## Sommaire
@@ -10,8 +12,10 @@ Un écran d'accueil sur mesure pour Android TV. Il remplace le launcher d'origin
 - [Les thèmes](#les-thèmes)
 - [Les paramètres](#les-paramètres)
 - [Modifier les mots doux](#modifier-les-mots-doux)
+- [Optimiser la télé](#optimiser-la-télé)
 - [Installer](#installer)
   - [Envoyer l'appli sur la télé avec ADB](#envoyer-lappli-sur-la-télé-avec-adb)
+- [Inspiration](#inspiration)
 - [Compiler soi-même](#compiler-soi-même)
 - [Visuels et droits](#visuels-et-droits)
 
@@ -81,6 +85,24 @@ Depuis un ordinateur ou un téléphone du même réseau, ouvrir l'adresse indiqu
 
 <img src="docs/screenshots/editeur-web.jpg" width="450" alt="La page d'édition des mots doux">
 
+## Optimiser la télé
+
+Une télé Android TV est livrée avec de nombreuses applications préinstallées que personne n'a choisies : statistiques d'usage et rapports envoyés au constructeur, boutique et services du constructeur, assistants vocaux, mode démonstration des magasins, services Google ou de tiers jamais utilisés. Elles tournent en arrière-plan, occupent de la mémoire, ralentissent l'interface et collectent des données.
+
+L'outil « Nettoyage de la TV » des paramètres s'en occupe :
+
+1. **Scanner la TV** : l'appli compare les applications installées à une liste connue (`launcher/app/src/main/assets/bloat.json`) et n'affiche que celles qui sont présentes. Chaque ligne indique le nom de l'appli, sa catégorie (télémétrie et rapports, constructeur, Google, services de tiers, accessibilité) et pourquoi elle est signalée.
+2. **Choisir** : un interrupteur par ligne permet de désactiver ou de réactiver les applications une par une, ce qui laisse le temps de décider. « Tout désactiver » et « Tout réactiver » traitent la liste d'un coup.
+3. **Vérifier** : chaque basculement est appliqué tout de suite, et l'état affiché est relu sur la télé.
+
+À savoir :
+
+- Les applications sont **désactivées, pas désinstallées** : elles ne tournent plus et ne consomment plus rien, mais restent sur la télé et se réactivent à tout moment. Rien n'est supprimé.
+- Une appli Android ne peut pas désactiver les autres. L'outil passe donc par l'ADB de la télé elle-même. Il faut pour cela activer le **débogage réseau** dans les options pour développeurs (voir la procédure d'installation plus bas), puis accepter une fois la fenêtre d'autorisation qui s'affiche sur l'écran, en cochant « Toujours autoriser ».
+- La liste a été préparée sur une télé TCL. Les applications du constructeur d'une autre marque ne s'y trouvent pas forcément, mais les applications Google et de tiers sont reconnues partout. Le fichier `bloat.json` se complète facilement.
+- La liste contient aussi des services d'accessibilité comme TalkBack : à garder activés si l'on en a besoin.
+- Pour **revenir au launcher d'origine**, choisir de nouveau l'écran d'accueil de la télé dans ses paramètres (le nom du menu varie selon les modèles, souvent « Écran d'accueil » dans les préférences de l'appareil). Les applications désactivées le restent, et le nettoyage peut être annulé depuis Nodecount TV avec « Tout réactiver ».
+
 ## Installer
 
 1. Télécharger `nodecount-tv.apk` dans la [dernière version](https://github.com/nodecount/Nodecount-TV/releases/latest).
@@ -110,6 +132,10 @@ Il faut Android TV 9 ou plus (API 28).
    Le message `Success` confirme l'installation.
 
 Si `adb devices` affiche `unauthorized`, accepter la fenêtre sur la télé puis relancer la commande.
+
+## Inspiration
+
+Nodecount TV s'inspire de [Projectivy Launcher](https://play.google.com/store/apps/details?id=com.spocky.projengmenu), un launcher alternatif pour Android TV, disponible sur le Play Store. Il a été installé et testé sur la télé de l'auteur avant la création de ce projet, et il reste une excellente option pour qui préfère une solution toute faite et très complète. Nodecount TV est un projet indépendant, plus petit, centré sur les thèmes, le nettoyage de la télé et les mots doux.
 
 ## Compiler soi-même
 
