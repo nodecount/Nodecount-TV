@@ -1,0 +1,1650 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nodecount TV</title>
+<style>
+  /* ---------- Polices (libres, licence OFL / Apache) : une par thème, embarquées dans fonts/ ---------- */
+  @font-face { font-family: "Outfit"; src: url(fonts/Outfit.ttf); font-weight: 100 900; }
+  @font-face { font-family: "Inter"; src: url(fonts/Inter.ttf); font-weight: 100 900; }
+  @font-face { font-family: "Manrope"; src: url(fonts/Manrope.ttf); font-weight: 200 800; }
+  @font-face { font-family: "Permanent Marker"; src: url(fonts/PermanentMarker.ttf); }
+  @font-face { font-family: "Bebas Neue"; src: url(fonts/BebasNeue.ttf); }
+  @font-face { font-family: "Pacifico"; src: url(fonts/Pacifico.ttf); }
+  /* Les polices à une seule graisse ne doivent pas être grossies artificiellement */
+  body { font-synthesis: none; }
+
+  /* ---------- Thèmes : chaque thème ne change que des variables ---------- */
+  :root, [data-theme="classique"] {
+    --bg: #0b0d12;
+    --text: #f2f2f2;
+    --muted: #9aa3b2;
+    --accent: #e8c9a0;
+    --tile: #161a22;
+    --tile-focus: #2a3550;
+    --ring: #f2f2f2;
+    --radius: 12px;
+    --border: 0 solid transparent;
+    --blur: none;
+    --shadow: none;
+    --font: "Outfit", sans-serif;
+    --overlay: none;
+  }
+
+  /* Glassmorphism : fond coloré + panneaux translucides, flous, bord clair fin */
+  [data-theme="glass"] {
+    --bg: radial-gradient(60vw 60vh at 15% 20%, #7b4dff 0%, transparent 60%),
+          radial-gradient(55vw 55vh at 85% 25%, #00c2ff 0%, transparent 60%),
+          radial-gradient(60vw 60vh at 55% 95%, #ff4fa3 0%, transparent 60%),
+          #151a3a;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.72);
+    --accent: #ffffff;
+    --tile: rgba(255,255,255,0.14);
+    --tile-focus: rgba(255,255,255,0.30);
+    --ring: rgba(255,255,255,0.9);
+    --radius: 24px;
+    --border: 1px solid rgba(255,255,255,0.28);
+    --blur: blur(14px) saturate(140%);
+    --shadow: 0 8px 32px rgba(0,0,0,0.28);
+    --font: "Manrope", sans-serif;
+  }
+
+  /* Jinx / Vi : papier peint en diaporama + voile sombre pour la lisibilité */
+  [data-theme="jinx"] {
+    --bg: #0a0a14;
+    --text: #ffffff;
+    --muted: #b8c4d6;
+    --accent: #ff7ac0;
+    --date-color: #3de0ff;
+    --label: #e6fbff;
+    --time-fill: linear-gradient(90deg, #3de0ff 0%, #8f7bff 55%, #ff4fa3 100%);
+    --glow: rgba(255,79,163,0.55);
+    --tile: linear-gradient(160deg, rgba(8,26,48,0.82), rgba(54,10,58,0.78));
+    --tile-focus: linear-gradient(160deg, rgba(20,110,150,0.9), rgba(120,20,100,0.85));
+    --ring: #3de0ff;
+    --radius: 8px;
+    --border: 0.25vh solid rgba(61,224,255,0.6);
+    --shadow: 0 0 2vh rgba(61,224,255,0.25);
+    --font: "Permanent Marker", Impact, sans-serif;
+    --time-weight: 400;
+    --overlay: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.35) 22%, rgba(0,0,0,0) 38%,
+      rgba(0,0,0,0) 62%, rgba(0,0,0,0.55) 74%, rgba(0,0,0,0.85) 100%);
+  }
+  [data-theme="vi"] {
+    --bg: #14080f;
+    --text: #ffffff;
+    --muted: #e6c6d4;
+    --accent: #ffb0d2;
+    --date-color: #7dffd1;
+    --label: #fff0f6;
+    --time-fill: linear-gradient(90deg, #7dffd1 0%, #ffd9a0 50%, #ff7eb6 100%);
+    --glow: rgba(125,255,209,0.45);
+    --tile: linear-gradient(160deg, rgba(8,40,36,0.82), rgba(62,12,36,0.8));
+    --tile-focus: linear-gradient(160deg, rgba(20,120,100,0.9), rgba(150,30,80,0.88));
+    --ring: #ffd24a;
+    --radius: 8px;
+    --border: 0.25vh solid rgba(255,143,192,0.65);
+    --shadow: 0 0 2vh rgba(255,126,182,0.25);
+    --font: "Bebas Neue", Impact, sans-serif;
+    --time-weight: 400;
+    --overlay: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.35) 22%, rgba(0,0,0,0) 38%,
+      rgba(0,0,0,0) 62%, rgba(0,0,0,0.55) 74%, rgba(0,0,0,0.85) 100%);
+  }
+
+  /* Apple : papiers peints en diaporama, tuiles de verre blanc façon tvOS, police Inter */
+  [data-theme="apple"] {
+    --bg: #000;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,0.78);
+    --accent: #ffffff;
+    --date-color: rgba(255,255,255,0.92);
+    --label: #ffffff;
+    --time-fill: linear-gradient(180deg, #ffffff, rgba(255,255,255,0.72));
+    --glow: rgba(255,255,255,0.35);
+    --tile: rgba(255,255,255,0.16);
+    --tile-focus: rgba(255,255,255,0.32);
+    --ring: #ffffff;
+    --radius: 18px;
+    --border: 1px solid rgba(255,255,255,0.32);
+    --blur: blur(10px) saturate(140%);
+    --shadow: 0 8px 28px rgba(0,0,0,0.35);
+    --font: "Inter", sans-serif;
+    --time-weight: 700;
+    --overlay: linear-gradient(180deg, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0) 24%,
+      rgba(0,0,0,0) 62%, rgba(0,0,0,0.5) 100%);
+  }
+
+  /* Mots doux (id "babe") : rose profond, même gabarit que les thèmes à image (en-tête, mot doux au centre, applis plus bas) */
+  [data-theme="babe"] {
+    --bg: radial-gradient(70vw 60vh at 50% 45%, #b3347f 0%, transparent 70%), linear-gradient(#2a0a1f, #5a1240);
+    --text: #fff0f7;
+    --muted: #f3bcd7;
+    --accent: #ffd0e6;
+    --label: #fff0f7;
+    --tile: linear-gradient(160deg, rgba(255,255,255,0.16), rgba(255,140,200,0.14));
+    --tile-focus: linear-gradient(160deg, rgba(255,255,255,0.34), rgba(255,140,200,0.34));
+    --ring: #ffd0e6;
+    --radius: 20px;
+    --border: 1px solid rgba(255,208,230,0.45);
+    --shadow: 0 0 3vh rgba(255,120,190,0.3);
+    --font: "Pacifico", cursive;
+    --time-weight: 400;
+    --date-color: #ffd0e6;
+    --time-fill: linear-gradient(180deg, #fff0f7, #ffb0d9);
+    --glow: rgba(255,120,190,0.6);
+  }
+  body[data-theme="babe"] #message { flex: 1; margin: 0 6vw; font-size: 6vh; font-weight: 600;
+    font-style: normal; text-shadow: 0 0 3vh rgba(255,120,190,0.6); }
+
+  /* ---------- Modale des paramètres : fond, texte, bordure, halo et anneau de sélection par thème ----------
+     La bordure fait toujours 0.6vh : le contenu est positionné par rapport à elle, donc une épaisseur
+     différente d'un thème à l'autre décalerait la mise en page des paramètres. */
+  :root, [data-theme="classique"] {
+    --modal-bg: rgba(11,13,18,1); --modal-text: #f2f2f2; --modal-ring: #e8c9a0;
+    --modal-edge: 0.6vh solid rgba(232,201,160,0.35); --modal-glow: 0 0 6vh rgba(0,0,0,0.5); }
+  [data-theme="glass"] {
+    --modal-bg: radial-gradient(circle at 30% 30%, rgba(123,77,255,1), rgba(21,26,58,1));
+    --modal-text: #ffffff; --modal-ring: rgba(255,255,255,0.95);
+    --modal-edge: 0.6vh solid rgba(255,255,255,0.35); --modal-glow: 0 0 8vh rgba(0,194,255,0.35); }
+  [data-theme="jinx"] {
+    --modal-bg: radial-gradient(circle, rgba(54,10,58,1), rgba(8,26,48,1));
+    --modal-text: #e6fbff; --modal-ring: #3de0ff;
+    --modal-edge: 0.6vh solid #3de0ff;
+    --modal-glow: 0 0 6vh rgba(255,79,163,0.6), inset 0 0 8vh rgba(61,224,255,0.25); }
+  [data-theme="vi"] {
+    --modal-bg: radial-gradient(circle, rgba(62,12,36,1), rgba(8,40,36,1));
+    --modal-text: #fff0f6; --modal-ring: #ffd24a;
+    --modal-edge: 0.6vh solid #ff8fc0;
+    --modal-glow: 0 0 6vh rgba(125,255,209,0.45), inset 0 0 8vh rgba(255,143,192,0.2); }
+  /* Mots doux */
+  [data-theme="babe"] {
+    --modal-bg: radial-gradient(circle, rgba(122,31,85,1), rgba(42,10,31,1));
+    --modal-text: #fff0f7; --modal-ring: #ffd0e6;
+    --modal-edge: 0.6vh solid rgba(255,208,230,0.6); --modal-glow: 0 0 7vh rgba(255,120,190,0.5); }
+  [data-theme="apple"] {
+    --modal-bg: rgba(28,28,30,1); --modal-text: #ffffff; --modal-ring: #ffffff;
+    --modal-edge: 0.6vh solid rgba(255,255,255,0.25); --modal-glow: 0 0 6vh rgba(0,0,0,0.5); }
+  /* Barres de défilement : couleur du curseur, du rail et bordure par thème */
+  :root, [data-theme="classique"] { --sb-thumb: #e8c9a0; --sb-track: rgba(255,255,255,0.1);
+    --sb-edge: 0 solid transparent; --sb-w: 0.9vh; --sb-r: 1vh; --sb-glow: none; }
+  [data-theme="glass"] { --sb-thumb: rgba(255,255,255,0.75); --sb-track: rgba(255,255,255,0.16);
+    --sb-edge: 1px solid rgba(255,255,255,0.5); --sb-w: 1.3vh; --sb-r: 1vh;
+    --sb-glow: 0 0 1vh rgba(255,255,255,0.5); }
+  /* Jinx / Vi : néon anguleux et lumineux */
+  [data-theme="jinx"] { --sb-thumb: linear-gradient(90deg, #3de0ff, #8f7bff 55%, #ff4fa3);
+    --sb-track: rgba(61,224,255,0.16); --sb-edge: 0.2vh solid rgba(61,224,255,0.7);
+    --sb-w: 1.4vh; --sb-r: 0.3vh; --sb-glow: 0 0 1.4vh rgba(61,224,255,0.85); }
+  [data-theme="vi"] { --sb-thumb: linear-gradient(90deg, #7dffd1, #ffd9a0 50%, #ff7eb6);
+    --sb-track: rgba(255,143,192,0.18); --sb-edge: 0.2vh solid rgba(255,143,192,0.7);
+    --sb-w: 1.4vh; --sb-r: 0.3vh; --sb-glow: 0 0 1.4vh rgba(255,143,192,0.85); }
+  /* Mots doux */
+  [data-theme="babe"] { --sb-thumb: #ffd0e6; --sb-track: rgba(255,208,230,0.16);
+    --sb-edge: 0.2vh solid rgba(255,120,190,0.6); }
+
+  /* Cœurs du thème Babe : ils surgissent au hasard (voir startHearts) */
+  #hearts { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+    pointer-events: none; overflow: hidden; }
+  body[data-theme="babe"] #hearts { display: block; }
+  .heart { position: absolute; opacity: 0; animation: heartPop 2.4s ease-out forwards;
+    filter: drop-shadow(0 0 1vh rgba(255,120,190,0.7)); }
+  .heart svg { display: block; width: 100%; height: 100%; }
+  @keyframes heartPop {
+    0%   { opacity: 0; transform: translateY(0) scale(0) rotate(var(--r)); }
+    16%  { opacity: 1; transform: translateY(-0.5vh) scale(1.3) rotate(var(--r)); }
+    28%  { transform: translateY(-1vh) scale(1) rotate(var(--r)); }
+    75%  { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-5vh) scale(1) rotate(var(--r)); }
+  }
+
+  /* ---------- Mise en page ---------- */
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; overflow: hidden; }
+  body { display: flex; flex-direction: column; padding: 4vh 5vw; position: relative;
+    background: var(--bg); color: var(--text); font-family: var(--font); }
+  body > * { position: relative; z-index: 2; }
+
+  /* Calques de papier peint (fondu enchaîné entre deux images) */
+  .wall { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+    background-size: cover; background-position: center; opacity: 0;
+    transition: opacity 1.5s ease; }
+  .wall.show { opacity: 1; }
+  #veil { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+    background: var(--overlay); pointer-events: none; }
+
+  /* Décor graffiti : seulement dans le thème Jinx */
+  #decor { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;
+    pointer-events: none; }
+  body[data-theme="jinx"] #decor { display: block; }
+  #decor svg { display: block; width: 100%; height: 100%; }
+
+  /* Tremblé : le dessin "bouge" d'une image à l'autre, par à-coups (~8 images/s), comme l'animation à la main */
+  #decor .boil { transform-box: fill-box; transform-origin: center;
+    animation: boil 0.5s step-end infinite; }
+  @keyframes boil {
+    0%   { transform: translate(0, 0) rotate(0deg); }
+    25%  { transform: translate(2px, -1.5px) rotate(0.5deg); }
+    50%  { transform: translate(-1.5px, 1px) rotate(-0.4deg); }
+    75%  { transform: translate(1px, 2px) rotate(0.3deg); }
+  }
+  /* Apparition / disparition : l'élément surgit en vacillant, reste, vacille, puis s'éteint un moment */
+  #decor .blink { animation: blink var(--d, 8s) step-end var(--o, 0s) infinite; }
+  @keyframes blink {
+    0%, 3% { opacity: 0; }
+    4%  { opacity: 0.95; }
+    6%  { opacity: 0; }
+    8%  { opacity: 0.95; }
+    10% { opacity: 0.2; }
+    12% { opacity: 0.95; }
+    68% { opacity: 0.95; }
+    70% { opacity: 0; }
+    72% { opacity: 0.95; }
+    74% { opacity: 0; }
+    76% { opacity: 0.6; }
+    78%, 100% { opacity: 0; }
+  }
+  /* Tracé : le trait se dessine, reste, puis disparaît d'un coup (par paliers, comme à bas débit d'images) */
+  #decor .draw { stroke-dasharray: 1; animation: draw var(--d, 8s) steps(28) var(--o, 0s) infinite; }
+  @keyframes draw {
+    0%   { stroke-dashoffset: 1; opacity: 0.95; }
+    25%  { stroke-dashoffset: 0; }
+    68%  { stroke-dashoffset: 0; opacity: 0.95; }
+    69%  { opacity: 0; }
+    100% { stroke-dashoffset: 1; opacity: 0; }
+  }
+  /* Coulures : elles descendent depuis le haut de l'éclaboussure */
+  #decor .drip { transform-box: fill-box; transform-origin: 50% 0;
+    animation: drip var(--d, 8s) steps(10) var(--o, 0s) infinite; }
+  @keyframes drip {
+    0%   { transform: scaleY(0.05); }
+    22%  { transform: scaleY(1); }
+    100% { transform: scaleY(1); }
+  }
+
+  /* Graffitis détourés posés autour du personnage : chacun est un bloc (position + rotation) qui contient
+     un bloc "blink" (apparaît / disparaît) qui contient l'image "boil" (tremblé) */
+  #decor .gp { position: absolute; transform: rotate(var(--rot, 0deg)); }
+  #decor .gp img { display: block; width: 100%; height: auto; }
+  /* Mouvements des graffitis : uniquement des SAUTS (animation en escalier, sans transition entre deux positions) :
+     déplacements et changements de taille se font d'un coup, à la cadence --t propre à chaque image. */
+  #decor .gp img { transform-origin: 50% 50%; }
+  #decor .m-jitter     { animation: jitter var(--t, 0.5s) step-end infinite; }
+  #decor .m-jitterfast { animation: jitterfast var(--t, 0.3s) step-end infinite; }
+  #decor .m-hop        { animation: hop var(--t, 2.5s) step-end infinite; }
+  #decor .m-shift      { animation: shift var(--t, 3s) step-end infinite; }
+  #decor .m-grow       { animation: grow var(--t, 2s) step-end infinite; }
+  #decor .m-squash     { animation: squash var(--t, 1.5s) step-end infinite; }
+  @keyframes jitterfast {
+    0%   { transform: translate(0, 0); }
+    20%  { transform: translate(3px, -2px); }
+    40%  { transform: translate(-3px, 2px); }
+    60%  { transform: translate(2px, 3px); }
+    80%  { transform: translate(-2px, -3px); }
+  }
+  @keyframes jitter {
+    0%   { transform: translate(0, 0); }
+    25%  { transform: translate(2px, -1.5px); }
+    50%  { transform: translate(-1.5px, 1px); }
+    75%  { transform: translate(1px, 2px); }
+  }
+  @keyframes hop { 0% { transform: translateY(0); } 50% { transform: translateY(-1.6vh); } }
+  @keyframes shift {
+    0%  { transform: translateX(-0.8vw); }
+    33% { transform: translateX(0); }
+    66% { transform: translateX(0.8vw); }
+  }
+  @keyframes grow { 0% { transform: scale(1); } 50% { transform: scale(1.12); } }
+  @keyframes squash {
+    0%  { transform: scale(1, 1); }
+    25% { transform: scale(1.08, 0.93); }
+    50% { transform: scale(0.95, 1.06); }
+    75% { transform: scale(1, 1); }
+  }  header { display: flex; align-items: flex-end; justify-content: space-between; }
+  /* Heure et date : en bas à droite, grasses, légèrement transparentes. La place est réservée sous les vignettes. */
+  #clock { position: fixed; right: 5vw; bottom: 3vh; z-index: 4; text-align: center; opacity: 0.55; }
+  #time { font-size: 17vh; font-weight: var(--time-weight, 800); line-height: 1; letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums; }
+  body:not([data-theme="classique"]):not([data-theme="glass"]):not(.photo) { padding-bottom: 26vh; }
+  body[data-theme="glass"] { padding-bottom: 3vh; }
+  /* Thèmes à image : l'heure et la date passent dans un en-tête (heure à gauche avec la date abrégée centrée dessous,
+     roue à droite, heure et roue alignées par le haut), donc plus rien en bas : la rangée d'applis descend. */
+  body.photo { padding-bottom: 5vh; }
+  body.photo #apps { grid-auto-columns: 12vw; }
+  body.photo #clock, body[data-theme="glass"] #clock { top: 4vh; bottom: auto; left: 5vw; right: auto; padding: 0; opacity: 0.9;
+    width: max-content; display: flex; flex-direction: column; align-items: center; text-align: center;
+    pointer-events: none; }
+  body.photo #time, body[data-theme="glass"] #time { font-size: 11vh; }
+  body.photo #date, body[data-theme="glass"] #date { margin: 0.4vh 0 0; text-align: center; }   /* taille : fitDate() (même largeur que l'heure) */
+  body[data-theme="babe"] #time { margin-top: -2.2vh; }   /* cette police laisse plus de vide au-dessus des chiffres */
+  /* La roue prend la couleur de la date de l'en-tête (sauf paramètres ouverts, où elle suit la modale) */
+  body.photo:not(.settings-open) #gear, body[data-theme="glass"]:not(.settings-open) #gear { color: var(--date-color, var(--muted)); }
+  body.photo:not(.settings-open) #gear:focus, body[data-theme="glass"]:not(.settings-open) #gear:focus { color: var(--ring); }
+
+  /* Apple : le dock 3D d'avant Yosemite. Une étagère de verre en perspective (un trapèze : plan incliné par
+     rotateX) large de 78% de l'écran et de taille fixe ; les icônes sont posées dessus, sur une seule ligne,
+     et dépassent du haut de la zone du dock. Chaque vignette se réduit (flex 1 1 0) autant qu'il faut pour que
+     toutes tiennent, jusqu'à 14vw au maximum ; leur reflet apparaît sur l'étagère. */
+  body[data-theme="apple"] { padding-bottom: 3vh; }
+  body[data-theme="apple"] #apps { display: flex; align-items: flex-end; justify-content: center; gap: 0.8vw;
+    flex: 0 0 auto; width: 78vw; height: 8vh; margin: auto auto 0; padding: 0 1vw 3.4vh;
+    overflow: visible; box-sizing: border-box; -webkit-mask-image: none; mask-image: none; }
+  body[data-theme="apple"] #apps::before { content: ""; position: absolute; z-index: 0; left: 0; right: 0; bottom: 0;
+    height: 16vh; transform-origin: 50% 100%; transform: perspective(90vh) rotateX(48deg);
+    border: 1px solid rgba(255,255,255,0.65); border-radius: 1.4vh;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.55), rgba(255,255,255,0.22) 55%, rgba(255,255,255,0.12));
+    -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+    box-shadow: inset 0 0 2.4vh rgba(255,255,255,0.25), 0 1.2vh 3.5vh rgba(0,0,0,0.45); }
+  body[data-theme="apple"] .app { position: relative; z-index: 1; flex: 1 1 0; min-width: 0; max-width: 14vw;
+    border-radius: 1.2vh; -webkit-box-reflect: below 0.2vh linear-gradient(transparent 62%, rgba(255,255,255,0.32)); }
+  body[data-theme="apple"] .app:focus { z-index: 3; }
+  #corner { margin-left: auto; }
+  /* width: 0 + min-width: 100% : la date ne compte pas dans la largeur du bloc, qui suit celle de l'heure ;
+     fitDate() ajuste sa taille pour qu'elle occupe exactement cette largeur. */
+  #date { width: 0; min-width: 100%; white-space: nowrap; margin-top: 0.8vh; font-size: 2.4vh; font-weight: 600; color: var(--date-color, var(--muted)); }
+
+  /* Thèmes à image : tout est coloré, le centre de l'écran reste libre pour voir l'image */
+  body.photo #time { background: var(--time-fill); -webkit-background-clip: text;
+    background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
+    font-weight: var(--time-weight, 800); filter: drop-shadow(0 0.4vh 1.2vh rgba(0,0,0,0.85)); }
+  body.photo #date { font-weight: 600; text-shadow: 0 0.3vh 1.2vh rgba(0,0,0,0.9); }
+  body.photo #message { margin: 2vh 6vw 0; min-height: 0; font-size: 5vh; font-weight: 600;
+    font-style: normal; text-shadow: 0 0 2.4vh var(--glow), 0 0.3vh 1.2vh rgba(0,0,0,0.9); }
+  body.photo .app span { color: var(--label); }
+  body.photo .manage { color: var(--date-color); }
+
+  #message { margin: 8vh 4vw; min-height: 12vh; display: flex; align-items: center;
+    justify-content: center; text-align: center; font-size: 5.6vh; line-height: 1.3;
+    font-style: italic; color: var(--accent); }
+
+  /* Une seule rangée d'applis en bas, pleine largeur, qui défile à l'horizontale (comme la Switch) :
+     les vignettes sortent de l'écran à droite et à gauche. */
+  #apps { flex: 0 0 auto; margin: auto -5vw 0; display: grid;
+    grid-auto-flow: column; grid-auto-columns: 15vw; grid-auto-rows: max-content;
+    gap: 1.8vh; overflow-x: auto; overflow-y: hidden; padding: 3vh 5vw; }
+  /* Barres de défilement aux couleurs du thème (--sb-*, définies plus haut) */
+  #apps::-webkit-scrollbar { display: none; }
+  /* Les vignettes coupées par le bord de l'écran s'estompent, sauf quand la rangée commence ou finit là
+     (--fl / --fr sont posées par updateEdgeFade). */
+  @property --fl { syntax: "<length>"; inherits: false; initial-value: 0px; }
+  @property --fr { syntax: "<length>"; inherits: false; initial-value: 0px; }
+  #apps { transition: --fl 0.25s ease, --fr 0.25s ease;
+    -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, #000 var(--fl), #000 calc(100% - var(--fr)), transparent 100%); }
+  body[data-theme="classique"] #apps { -webkit-mask-image: none; mask-image: none; }
+  /* Mode normal : pas de mot doux, vignettes éparpillées et inclinées (placées par scatter()).
+     La vignette sélectionnée passe devant, se redresse et "pop" façon dessin animé. */
+  /* Les mots doux sont réservés au thème Babe */
+  body:not([data-theme="babe"]) #message { display: none; }
+  body[data-theme="classique"] #apps { position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    margin: 0; padding: 0; display: block; overflow: hidden; z-index: 1; }
+  body[data-theme="classique"] .app { position: absolute; width: 17vw;
+    transform: rotate(var(--rot, 0deg)); box-shadow: 0 1vh 3vh rgba(0,0,0,0.55);
+    transition: left 0.5s cubic-bezier(0.3, 0.7, 0.2, 1), top 0.5s cubic-bezier(0.3, 0.7, 0.2, 1),
+      transform 0.35s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.14s ease; }
+  /* Arrivée (zoom in, léger zoom out) puis respiration lente tant que la vignette reste sélectionnée */
+  body[data-theme="classique"] .app:focus { z-index: 50 !important; transform: rotate(0deg) scale(1.62);
+    box-shadow: 0 0 0 0.6vh var(--ring), 0 2vh 5vh rgba(0,0,0,0.7);
+    animation: pop 0.24s cubic-bezier(0.25, 0.1, 0.25, 1), idle 3s ease-in-out 0.24s infinite; }
+  @keyframes pop {
+    0%   { transform: rotate(var(--rot, 0deg)) scale(1); }
+    65%  { transform: rotate(0deg) scale(1.68); }
+    100% { transform: rotate(0deg) scale(1.62); }
+  }
+  @keyframes idle {
+    0%, 100% { transform: translateY(0) rotate(0deg) scale(1.62); }
+    50%      { transform: translateY(-0.7vh) rotate(0.8deg) scale(1.66); }
+  }
+  @keyframes popRow {
+    0%   { transform: scale(1); }
+    60%  { transform: scale(1.17); }
+    100% { transform: scale(1.14); }
+  }
+  .app { background: var(--tile); border: var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+    padding: 0; color: inherit; font-family: inherit; font-size: 2.4vh;
+    cursor: pointer; outline: none; overflow: hidden; }
+  .app img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover;
+    background: rgba(128,128,128,0.25); }
+  .app span { display: block; margin-top: 1vh; padding: 0 1vh; overflow: hidden; color: var(--label, inherit);
+    white-space: nowrap; text-overflow: ellipsis; }
+  /* Seul transform est animé : il reste sur le GPU (le box-shadow, lui, redessinerait la vignette à chaque image). */
+  .app, #gear { transition: transform 0.14s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.14s ease; }
+  .app:focus { background: var(--tile-focus); box-shadow: 0 0 0 0.6vh var(--ring);
+    transform: scale(1.05); }
+  .app:focus { transform: scale(1.14); position: relative; z-index: 3;
+    animation: popRow 0.16s cubic-bezier(0.25, 0.1, 0.25, 1); }   /* pas d'animation d'attente hors thème de base */
+
+  #corner { display: flex; align-items: flex-end; gap: 3vw; }
+  /* La roue n'a jamais de fond : seulement le symbole */
+  #gear { background: none; border: 0; box-shadow: none;
+    width: 7vh; height: 7vh; padding: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--label, var(--text)); font-size: 5vh; line-height: 1; cursor: pointer; outline: none; }
+  body.settings-open #gear { color: var(--modal-text); }
+  /* Un tour complet : sens horaire à l'ouverture (0 → 360°), antihoraire à la fermeture (360° → 0) */
+  #gear .cog { display: block; transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1); }
+  body.settings-open #gear .cog { transform: rotate(360deg); }
+  #gear:focus { color: var(--ring); transform: scale(1.15); filter: drop-shadow(0 0 0.8vh var(--ring)); }
+  body.settings-open #gear:focus { color: var(--modal-ring); filter: drop-shadow(0 0 0.8vh var(--modal-ring)); }
+
+  #settings h1 { margin: 0; font-size: 5vh; font-weight: 300; }
+  #settings p { margin: 1vh 0 2vh; color: var(--muted); font-size: 2.4vh; }
+  /* line-height explicite : sinon chaque police a sa propre hauteur de ligne et décale la mise en page */
+  #settings h2 { margin: 3vh 0 1vh; font-size: 4.6vh; line-height: 6vh; font-weight: 600; letter-spacing: 0.1vh; }
+  #panel { flex: 1; min-height: 0; overflow-y: auto; padding: 0 1.4vh 3vh; }
+  #panel h2:first-child { margin-top: 0; }
+  #msginfo { margin: 0; padding: 1vh 0; font-size: 3.2vh; line-height: 5vh; opacity: 0.85; }
+  #msginfo b { font-weight: 700; letter-spacing: 0.3vh; }
+  #panel::-webkit-scrollbar { display: none; }
+  #list, #themes, #options { display: grid; grid-auto-rows: max-content; gap: 2vh 1.6vh; padding: 1.2vh 0; }
+  /* minmax(0, 1fr) : colonnes toutes égales, même si un nom est long */
+  #clean { padding: 1.2vh 0; }
+  #clean p { margin: 0 0 1.4vh; font-size: 2.6vh; line-height: 3.8vh; opacity: 0.85; }
+  .cbtn { display: block; width: 100%; margin: 1.2vh 0; padding: 1.6vh 2vh; border-radius: 1.6vh;
+    border: 0.4vh solid rgba(128,128,128,0.45); background: rgba(128,128,128,0.16); color: inherit;
+    font-family: inherit; font-size: 2.8vh; font-weight: 600; text-align: left; cursor: pointer; outline: none; }
+  .cbtn:focus { border-color: var(--modal-ring, #fff); box-shadow: 0 0 0 0.5vh var(--modal-ring, #fff); }
+  #clean .toggle { display: flex; width: 100%; margin: 1vh 0; }
+  #themes, #list, #options { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+
+  /* Cartes d'aperçu (comme les thèmes de GitLab) : un rectangle, un titre, une coche si choisi */
+  .card { display: flex; flex-direction: column; gap: 0.8vh; padding: 0; background: none; border: 0;
+    color: inherit; font-family: inherit; font-size: 2.1vh; text-align: left; cursor: pointer; outline: none; }
+  .card { min-width: 0; }
+  /* Rapport 16/9 par le padding (fonctionne aussi sur les vieux moteurs web, contrairement à aspect-ratio) */
+  .card .thumb::before { content: ""; display: block; padding-top: 56.25%; }
+  .card .thumb { position: relative; overflow: hidden; border-radius: 1.2vh;
+    border: 0.4vh solid rgba(128,128,128,0.45); background: rgba(128,128,128,0.25);
+    transition: transform 0.14s cubic-bezier(0.25, 0.1, 0.25, 1); }
+  .card:focus .thumb { transform: scale(1.04); border-color: var(--modal-ring, #fff);
+    box-shadow: 0 0 0 0.5vh var(--modal-ring, #fff); }
+  .card.on .thumb { border-color: #4fd17a; }
+  /* Interrupteur : libellé + description à gauche, glissière à droite (verte quand activé) */
+  .toggle { grid-column: span 2; display: flex; align-items: center; justify-content: space-between; gap: 2vw;
+    padding: 1.6vh 2vh; border-radius: 1.6vh; border: 0.4vh solid rgba(128,128,128,0.45);
+    background: rgba(128,128,128,0.16); color: inherit; font-family: inherit; text-align: left; cursor: pointer; outline: none; }
+  .toggle:focus { border-color: var(--modal-ring, #fff); box-shadow: 0 0 0 0.5vh var(--modal-ring, #fff); }
+  .toggle .tx b { display: block; font-size: 2.8vh; font-weight: 600; line-height: 3.6vh; }
+  .toggle .tx small { display: block; font-size: 2vh; line-height: 2.8vh; opacity: 0.7; }
+  .toggle .sw { position: relative; flex: none; width: 8vh; height: 4.4vh; border-radius: 2.2vh;
+    background: rgba(128,128,128,0.55); transition: background 0.18s ease; }
+  .toggle .sw i { position: absolute; top: 0.4vh; left: 0.4vh; width: 3.6vh; height: 3.6vh; border-radius: 50%;
+    background: #fff; box-shadow: 0 0.2vh 0.6vh rgba(0,0,0,0.4); transition: transform 0.18s ease; }
+  .toggle.on .sw { background: #4fd17a; }
+  .toggle.on .sw i { transform: translateX(3.6vh); }
+  .card .name { line-height: 3vh; padding: 0 0.4vh; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .card .tick { position: absolute; top: 0.8vh; right: 0.8vh; z-index: 2; width: 3.4vh; height: 3.4vh;
+    border-radius: 50%; background: #4fd17a; color: #0b1a10; display: none; align-items: center;
+    justify-content: center; font-size: 2.2vh; line-height: 1; }
+  .card.on .tick { display: flex; }
+  .app-card img { position: absolute; top: 0; left: 0; display: block; width: 100%; height: 100%;
+    object-fit: cover; transition: opacity 0.2s ease; }
+  .app-card:not(.on) img { opacity: 0.3; filter: grayscale(1); }
+
+  /* Deux options indépendantes : plus aucune transition ni animation, les déplacements et zooms restent mais sont bruts.
+     - "Animations des thèmes" (noanim-theme) : cœurs, graffitis, fondu entre images (l'anneau avance alors par paliers) ;
+     - "Animations des vignettes" (noanim-tile) : focus des vignettes, listes et paramètres, panneau, roue, curseurs. */
+  body.noanim-theme #hearts, body.noanim-theme #hearts *, body.noanim-theme #decor, body.noanim-theme #decor *,
+  body.noanim-theme .wall { transition: none !important; animation: none !important; }
+  body.noanim-theme .heart { opacity: 1; transform: rotate(var(--r)); }   /* cœurs posés, fixes (startHearts) */
+  body.noanim-theme #loader.run .bar { animation: loaderfill var(--rotate-ms, 30s) steps(30, end) forwards !important; }
+  body.noanim-tile .app, body.noanim-tile .app *, body.noanim-tile .card, body.noanim-tile .card *,
+  body.noanim-tile .toggle, body.noanim-tile .toggle *, body.noanim-tile #gear, body.noanim-tile #gear *,
+  body.noanim-tile #apps, body.noanim-tile #list, body.noanim-tile #themes, body.noanim-tile #panel,
+  body.noanim-tile #layoutbar, body.noanim-tile #layoutbar *, body.noanim-tile #volume, body.noanim-tile #volume *,
+  body.noanim-tile #settings, body.noanim-tile #settings::before, body.noanim-tile #settings aside,
+  body.noanim-tile header, body.noanim-tile #conn { transition: none !important; animation: none !important;
+    scroll-behavior: auto !important; }
+  /* Sans animation, la vignette sélectionnée n'est repérée que par sa bordure : aucun zoom (Cartes garde son inclinaison) */
+  body.noanim-tile .app:focus, body.noanim-tile .card:focus .thumb, body.noanim-tile #gear:focus { transform: none !important; }
+  body.noanim-tile[data-theme="classique"] .app:focus { transform: rotate(var(--rot, 0deg)) !important; }
+
+  /* Mots doux : lien de la page d'édition, discret, dans le coin bas gauche (le code PIN, lui, s'affiche à la connexion) */
+  #msghint { position: fixed; left: 0.8vh; bottom: 0.8vh; z-index: 5; display: none; pointer-events: none;
+    font-size: 1.9vh; line-height: 2.4vh; color: var(--text); opacity: 0.6; text-align: left; }
+  body[data-theme="babe"] #msghint { display: block; }
+
+  /* Popup de connexion à la page des mots doux : au centre, aux couleurs de la fenêtre des paramètres du thème */
+  #conn { position: fixed; z-index: 30; left: 50%; top: 50%; transform: translate(-50%, -50%); display: none;
+    min-width: 40vw; padding: 4vh 5vw; text-align: center; border-radius: 3vh;
+    background: var(--modal-bg, #1c1c1e); color: var(--modal-text, #fff);
+    border: var(--modal-edge, 0.6vh solid rgba(255,255,255,0.3)); box-shadow: var(--modal-glow, 0 0 6vh rgba(0,0,0,0.6)); }
+  #conn.show { display: block; }
+  #conn .t { font-size: 3.2vh; font-weight: 600; }
+  #conn .s { margin-top: 1vh; font-size: 2.4vh; opacity: 0.75; }
+  #conn .pin { margin: 2.4vh 0 1.6vh; font-size: 11vh; line-height: 1; font-weight: 800; letter-spacing: 1.6vh;
+    padding-left: 1.6vh; font-variant-numeric: tabular-nums; color: var(--modal-ring, #fff); }
+  #conn .h { font-size: 2.4vh; opacity: 0.75; }
+
+  /* Vignette d'un thème : un simple logo sur un fond plat (rien d'animé, aucune réplique d'écran) */
+  .logo { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; align-items: center;
+    justify-content: center; overflow: hidden; color: var(--text); font-family: var(--font); }
+  .logo img { height: 78%; width: auto; max-width: 80%; object-fit: contain; }
+  .logo b { font-size: 4.6vh; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
+  .logo[data-theme="classique"] { background: #0b0d12; }
+  .logo[data-theme="glass"] { background: linear-gradient(135deg, #7b4dff, #00c2ff 55%, #ff4fa3); }
+  .logo[data-theme="glass"] b { padding: 1vh 2.4vh; border-radius: 1.6vh; background: rgba(255,255,255,0.25);
+    border: 1px solid rgba(255,255,255,0.6); }
+  .logo[data-theme="jinx"] { background: linear-gradient(135deg, #360a3a, #081a30); }
+  .logo[data-theme="babe"] { background: linear-gradient(135deg, #7a1f55, #2a0a1f); }
+  .logo[data-theme="babe"] b { font-size: 4.2vh; font-weight: 400; text-transform: none; letter-spacing: 0;
+    text-shadow: 0 0 2vh rgba(255,120,190,0.7); }
+  .logo[data-theme="vi"] { background: linear-gradient(135deg, #3e0c24, #082824); }
+  .logo[data-theme="apple"] { background: linear-gradient(#3a3a3c, #000); }
+
+  /* Thèmes à image : petit anneau dans le coin bas droit, hors du contenu, qui se remplit jusqu'au changement d'image.
+     Chaque thème a son style : couleurs (--ld-a/--ld-b), épaisseur, bouts, halo. */
+  #loader { position: fixed; right: 0.8vh; bottom: 0.8vh; width: 2.6vh; height: 2.6vh; z-index: 5;
+    pointer-events: none; display: none; transform: rotate(-90deg); overflow: visible;
+    --ld-a: #fff; --ld-b: #fff; --ld-track: rgba(255,255,255,0.22); --ld-w: 2.4; --ld-cap: round; --ld-glow: none; }
+  body.rotates #loader { display: block; }
+  #loader circle { fill: none; stroke-width: var(--ld-w); }
+  #loader .trk { stroke: var(--ld-track); }
+  #loader .bar { stroke: url(#loadergrad); stroke-linecap: var(--ld-cap); stroke-dasharray: 100; stroke-dashoffset: 100;
+    filter: var(--ld-glow); }
+  #loader.run .bar { animation: loaderfill var(--rotate-ms, 30s) linear forwards; }
+  @keyframes loaderfill { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+  /* Jinx : néon cyan vers rose, bouts carrés, halo */
+  body[data-theme="jinx"] #loader { --ld-a: #3de0ff; --ld-b: #ff4fa3; --ld-track: rgba(61,224,255,0.2);
+    --ld-w: 3; --ld-cap: butt; --ld-glow: drop-shadow(0 0 0.5vh rgba(61,224,255,0.9)); }
+  /* Vi : menthe vers rose, halo doux */
+  body[data-theme="vi"] #loader { --ld-a: #7dffd1; --ld-b: #ff7eb6; --ld-track: rgba(255,143,192,0.22);
+    --ld-w: 3; --ld-cap: butt; --ld-glow: drop-shadow(0 0 0.5vh rgba(255,143,192,0.85)); }
+  /* Apple : fin, blanc, bouts arrondis, sans halo */
+  body[data-theme="apple"] #loader { --ld-a: #fff; --ld-b: rgba(255,255,255,0.85); --ld-track: rgba(255,255,255,0.28);
+    --ld-w: 1.8; --ld-cap: round; --ld-glow: none; }
+
+  /* Verre : on durcit un peu le fond si le flou n'est pas disponible */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-theme="glass"] { --tile: rgba(60,70,130,0.55); }
+  }
+
+  /* Glassmorphism : heure et date en haut à gauche ; applis plus grandes, en grille de plusieurs lignes qui
+     défile à la verticale (barre masquée). Elles s'estompent près du bord haut / bas de l'écran, mais seulement
+     s'il y a d'autres lignes de ce côté (--ft / --fb, posées par updateEdgeFade). */
+  @property --ft { syntax: "<length>"; inherits: false; initial-value: 0px; }
+  @property --fb { syntax: "<length>"; inherits: false; initial-value: 0px; }
+  /* Marges intérieures larges : la vignette sélectionnée grossit (et rebondit) sans être coupée par la grille,
+     dont l'overflow rogne tout ce qui dépasse. */
+  body[data-theme="glass"] #apps { flex: 1 1 auto; min-height: 0; margin: 11vh -6vw 0;   /* sous l'heure et la date de l'en-tête */
+    grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 3vh 2vw; overflow-x: hidden; overflow-y: auto; padding: 4vh 6vw;
+    transition: --ft 0.25s ease, --fb 0.25s ease;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--ft), #000 calc(100% - var(--fb)), transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 var(--ft), #000 calc(100% - var(--fb)), transparent 100%); }
+
+  /* Boutons de disposition (thème de base) : en bas à gauche */
+  #layoutbar { display: none; position: fixed; left: 5vw; bottom: 3vh; z-index: 4; gap: 1.6vh; }
+  body[data-theme="classique"] #layoutbar { display: flex; }
+  #layoutbar button { display: flex; align-items: center; gap: 1vh; padding: 1.4vh 2.4vh;
+    background: var(--tile); color: var(--text); border: var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); font-family: inherit; font-size: 2.3vh; cursor: pointer; outline: none;
+    transition: transform 0.14s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.14s ease; }
+  #layoutbar button:focus { background: var(--tile-focus); box-shadow: 0 0 0 0.5vh var(--ring);
+    transform: scale(1.07); }
+  #layoutbar svg { width: 2.8vh; height: 2.8vh; fill: none; stroke: currentColor; stroke-width: 2;
+    stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Barre de volume : reprend les variables du thème (tuile, bordure, rayon, ombre, dégradé de l'heure) */
+  #volume { position: fixed; left: 50%; bottom: 5vh; width: 40vw; z-index: 8; display: flex;
+    align-items: center; gap: 2vh; padding: 2vh 3vh; pointer-events: none;
+    background: var(--tile); border: var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow), 0 1vh 4vh rgba(0,0,0,0.45);
+    -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+    color: var(--label, var(--text)); font-family: var(--font);
+    opacity: 0; transform: translate(-50%, 3vh); transition: opacity 0.15s ease, transform 0.15s ease; }
+  #volume.show { opacity: 1; transform: translate(-50%, 0); }
+  #volume svg { flex: none; width: 4vh; height: 4vh; }
+  #volume .slash { display: none; }
+  #volume.muted .slash { display: inline; }
+  #volume.muted .wave { display: none; }
+  #volume .track { flex: 1; height: 1.4vh; border-radius: 1vh; background: rgba(128,128,128,0.4);
+    overflow: hidden; }
+  #volume .fill { width: 0; height: 100%; border-radius: 1vh;
+    background: var(--time-fill, var(--accent)); box-shadow: 0 0 1.5vh var(--glow, transparent);
+    transition: width 0.12s ease-out; }
+  #volume .num { flex: none; width: 5vh; text-align: right; font-size: 2.6vh; font-weight: 700; }
+
+  /* Paramètres : un cercle sombre part du coin haut droit (l'engrenage) vers le coin bas gauche,
+     assombrit ce qui est derrière, et révèle le panneau latéral à droite. */
+  /* Pour que l'animation reste légère sur la TV (seuls transform et opacity bougent, calculés par le GPU) :
+     - le cercle est un disque plein sans contenu (::before, 80vh) centré sur l'engrenage (--gx / --gy, posés par
+       openSettings) qu'on agrandit ×4 (320vh de diamètre) ;
+     - le contenu n'apparaît qu'en fondu, une fois le disque ouvert ;
+     - pendant ce temps le fond est figé (cœurs, graffitis, vignettes). */
+  #settings { position: fixed; z-index: 6; left: 0; top: 0; width: 100vw; height: 100vh;
+    color: var(--modal-text); visibility: hidden; transition: visibility 0s linear 0.3s; }
+  #settings.open { visibility: visible; transition: visibility 0s; }
+  #settings::before { content: ''; position: absolute; width: 80vh; height: 80vh; border-radius: 50%;
+    left: calc(var(--gx, 90vw) - 40vh); top: calc(var(--gy, 8vh) - 40vh); background: var(--modal-bg);
+    will-change: transform; transform: scale(0); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  #settings.open::before { transform: scale(4); transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  /* Panneau remonté en haut de l'écran, à gauche de la roue : son bord droit s'arrête 2vh avant elle */
+  #settings aside { position: absolute; left: calc(var(--gx, 90vw) + 3.5vh - 66vw); top: calc(var(--gy, 8vh) - 3.5vh);
+    width: calc(66vw - 9vh); height: 92vh; display: flex; flex-direction: column;
+    opacity: 0; transition: opacity 0.1s linear; }
+  #settings.open aside { opacity: 1; transition: opacity 0.15s linear 0.25s; }
+  body.settings-open #hearts, body.settings-open #decor { visibility: hidden; transition: visibility 0s linear 0.3s; }
+  body.settings-open .app, body.settings-open #loader .bar { animation-play-state: paused !important; }
+  /* L'engrenage reste visible au centre du cercle */
+  /* La roue reste au-dessus du disque jusqu'à la fin de sa fermeture (sinon il la recouvre en rétrécissant) */
+  header { transition: z-index 0s linear 0.3s; }
+  body.settings-open header { z-index: 7; transition: z-index 0s; }
+  #settings h1 { text-align: center; }
+  #settings h2 { opacity: 0.8; }
+
+</style>
+</head>
+<body data-theme="glass">
+  <div class="wall" id="wallA"></div>
+  <div class="wall" id="wallB"></div>
+  <div id="veil"></div>
+
+  <!-- Graffitis du thème Jinx : éclaboussures, coulures, gribouillis, étoiles (dessinés pour le thème).
+       Animés façon dessin à la main : tremblé à bas débit d'images (boil), tracé progressif (draw),
+       apparitions/disparitions saccadées (blink), coulures qui descendent (drip). -->
+  <div id="hearts" aria-hidden="true"></div>
+
+  <div id="decor" aria-hidden="true">
+    <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+
+      <!-- éclaboussure rose à gauche (descendue sous la date), avec coulures -->
+      <g class="blink" style="--d:9s;--o:0s" transform="translate(760 100)">
+        <g class="boil" fill="#ff4fa3">
+          <circle cx="130" cy="110" r="92"/>
+          <circle cx="270" cy="55" r="18"/><circle cx="310" cy="170" r="10"/>
+          <circle cx="35" cy="265" r="14"/><circle cx="215" cy="262" r="8"/>
+          <circle cx="75" cy="12" r="10"/><circle cx="360" cy="95" r="7"/>
+          <g class="drip" style="--d:9s;--o:0s">
+            <path d="M95 190V330M150 195V270M55 175V250" stroke="#ff4fa3" stroke-width="16"
+              stroke-linecap="round" fill="none"/>
+            <circle cx="95" cy="338" r="13"/><circle cx="150" cy="278" r="12"/><circle cx="55" cy="258" r="11"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- éclaboussure bleue en bas à gauche -->
+      <g class="blink" style="--d:11s;--o:3s">
+        <g class="boil" fill="#3de0ff">
+          <circle cx="90" cy="985" r="85"/>
+          <circle cx="230" cy="1030" r="16"/><circle cx="200" cy="900" r="10"/>
+          <circle cx="20" cy="860" r="12"/><circle cx="300" cy="975" r="8"/>
+          <g class="drip" style="--d:11s;--o:3s">
+            <path d="M60 900V820M120 905V860" stroke="#3de0ff" stroke-width="15"
+              stroke-linecap="round" fill="none"/>
+            <circle cx="60" cy="812" r="12"/><circle cx="120" cy="852" r="11"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- éclaboussure violette sur le bord droit -->
+      <g class="blink" style="--d:13s;--o:6s">
+        <g class="boil" fill="#8f7bff">
+          <circle cx="1900" cy="600" r="70"/>
+          <circle cx="1780" cy="540" r="13"/><circle cx="1800" cy="680" r="9"/>
+          <g class="drip" style="--d:13s;--o:6s">
+            <path d="M1880 660V780M1920 650V730" stroke="#8f7bff" stroke-width="15"
+              stroke-linecap="round" fill="none"/>
+            <circle cx="1880" cy="788" r="12"/>
+          </g>
+        </g>
+      </g>
+
+    </svg>
+    <!-- graffitis détourés (planche de 17 graffitis Jinx), éparpillés ; chacun bouge à sa façon -->
+    <div class="gp" style="left:42.6vw;top:15vh;width:7vw;--rot:-10deg"><div class="blink" style="--d:8s;--o:0.5s"><img class="m-shift" style="--t:3.6s" src="graffiti/couronne.png" alt=""></div></div>
+    <div class="gp" style="left:2vw;top:33vh;width:9vw;--rot:-5deg"><div class="blink" style="--d:12s;--o:4s"><img class="m-grow" style="--t:2.2s" src="graffiti/jinx_was_here.png" alt=""></div></div>
+    <div class="gp" style="left:5vw;top:58vh;width:10vw;--rot:6deg"><div class="blink" style="--d:11s;--o:6s"><img class="m-squash" style="--t:1.8s" src="graffiti/machoire.png" alt=""></div></div>
+    <div class="gp" style="left:14vw;top:47vh;width:2.6vw;--rot:-8deg"><div class="blink" style="--d:9s;--o:3s"><img class="m-jitter" style="--t:0.9s" src="graffiti/x_rose.png" alt=""></div></div>
+    <div class="gp" style="left:50vw;top:42vh;width:8vw;--rot:6deg"><div class="blink" style="--d:10s;--o:2.5s"><img class="m-jitterfast" style="--t:0.3s" src="graffiti/get_jinxed.png" alt=""></div></div>
+    <div class="gp" style="left:24vw;top:30vh;width:3.5vw;--rot:14deg"><div class="blink" style="--d:7s;--o:1s"><img class="m-hop" style="--t:2.2s" src="graffiti/petit_visage.png" alt=""></div></div>
+    <div class="gp" style="left:20vw;top:56vh;width:2.5vw;--rot:-12deg"><div class="blink" style="--d:9s;--o:5s"><img class="m-jitter" style="--t:0.6s" src="graffiti/huit.png" alt=""></div></div>
+    <div class="gp" style="left:30vw;top:44vh;width:2vw;--rot:10deg"><div class="blink" style="--d:8s;--o:7s"><img class="m-jitter" style="--t:0.5s" src="graffiti/vi.png" alt=""></div></div>
+    <div class="gp" style="left:31vw;top:9vh;width:9vw;--rot:-4deg"><div class="blink" style="--d:13s;--o:1.5s"><img class="m-shift" style="--t:3.4s" src="graffiti/pow_pow.png" alt=""></div></div>
+    <div class="gp" style="left:60vw;top:12vh;width:11vw;--rot:-5deg"><div class="blink" style="--d:10s;--o:6.5s"><img class="m-hop" style="--t:2.8s" src="graffiti/not_crazy.png" alt=""></div></div>
+    <div class="gp" style="left:64vw;top:38vh;width:3vw;--rot:8deg"><div class="blink" style="--d:7s;--o:5.5s"><img class="m-squash" style="--t:1.2s" src="graffiti/boite.png" alt=""></div></div>
+    <div class="gp" style="left:84vw;top:14vh;width:11vw;--rot:6deg"><div class="blink" style="--d:12s;--o:0s"><img class="m-hop" style="--t:3s" src="graffiti/crane_rose.png" alt=""></div></div>
+    <div class="gp" style="left:74vw;top:30vh;width:7vw;--rot:-6deg"><div class="blink" style="--d:9s;--o:2s"><img class="m-jitterfast" style="--t:0.35s" src="graffiti/haha.png" alt=""></div></div>
+    <div class="gp" style="left:89vw;top:38vh;width:8vw;--rot:7deg"><div class="blink" style="--d:13s;--o:4.5s"><img class="m-grow" style="--t:1.8s" src="graffiti/tete_pointes.png" alt=""></div></div>
+    <div class="gp" style="left:66vw;top:56vh;width:9vw;--rot:-5deg"><div class="blink" style="--d:11s;--o:8s"><img class="m-shift" style="--t:4s" src="graffiti/yeux_x.png" alt=""></div></div>
+    <div class="gp" style="left:86vw;top:60vh;width:8vw;--rot:5deg"><div class="blink" style="--d:8s;--o:3.5s"><img class="m-shift" style="--t:2.6s" src="graffiti/crane_singe.png" alt=""></div></div>
+  </div>
+
+  <header>
+    <div id="corner">
+      <button id="gear" data-pkg="__settings__" aria-label="Paramètres"><span class="cog">&#9881;</span></button>
+    </div>
+  </header>
+
+  <div id="clock">
+    <div id="time">--:--</div>
+    <div id="date"></div>
+  </div>
+
+  <!-- Thème de base seulement : remélanger ou ordonner les vignettes -->
+  <div id="layoutbar">
+    <button id="btnShuffle" data-pkg="__shuffle__">
+      <svg viewBox="0 0 24 24"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
+      <span>Mélanger</span>
+    </button>
+    <button id="btnOrder" data-pkg="__order__">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      <span>Ordonner</span>
+    </button>
+  </div>
+
+  <svg id="loader" viewBox="0 0 20 20" aria-hidden="true">
+    <defs>
+      <linearGradient id="loadergrad" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" style="stop-color: var(--ld-a, #fff)"/>
+        <stop offset="1" style="stop-color: var(--ld-b, #fff)"/>
+      </linearGradient>
+    </defs>
+    <circle class="trk" cx="10" cy="10" r="8"/>
+    <circle class="bar" cx="10" cy="10" r="8" pathLength="100"/>
+  </svg>
+
+  <div id="conn" aria-hidden="true">
+    <div class="t">Connexion à la page des mots doux</div>
+    <div class="s"></div>
+    <div class="pin"></div>
+    <div class="h">Saisis ce code dans la page web</div>
+  </div>
+
+  <div id="volume" aria-hidden="true">
+    <svg viewBox="0 0 24 24">
+      <path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/>
+      <path class="wave" d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path class="slash" d="M16 9l6 6M22 9l-6 6" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <div class="track"><div class="fill"></div></div>
+    <span class="num"></span>
+  </div>
+
+  <div id="message"></div>
+  <div id="msghint"></div>
+
+  <main id="apps"></main>
+
+  <section id="settings">
+    <aside>
+      <div id="panel">
+        <h2>Thème</h2>
+        <div id="themes"></div>
+        <h2>Animations</h2>
+        <div id="options"></div>
+        <h2>Applis affichées</h2>
+        <div id="list"></div>
+        <h2>Nettoyage de la TV</h2>
+        <div id="clean"></div>
+        <h2>Mots doux</h2>
+        <p id="msginfo"></p>
+      </div>
+    </aside>
+  </section>
+
+<script>
+  // Hors de l'appli (aperçu dans un navigateur), on simule la passerelle Android.
+  if (typeof Android === 'undefined') {
+    var devBloat = [
+      { package: 'com.tcl.bi', name: 'TCL Statistiques', group: 'Télémétrie et rapports', why: "Mesure l'usage de la TV", state: 'active' },
+      { package: 'com.tcl.showmode', name: 'Mode démonstration', group: 'Constructeur (TCL)', why: 'Mode démo pour les magasins', state: 'active' },
+      { package: 'com.google.android.videos', name: 'Google TV', group: 'Google', why: 'Films et séries Google', state: 'disabled' }
+    ];
+    window.Android = {
+      getApps: function () {
+        return JSON.stringify([
+          { package: 'com.netflix.ninja', label: 'Netflix', default: true },
+          { package: 'com.amazon.amazonvideo.livingroom', label: 'Prime Video', default: true },
+          { package: 'com.disney.disneyplus', label: 'Disney+', default: true },
+          { package: 'tv.twitch.android.app', label: 'Twitch', default: true },
+          { package: 'com.google.android.youtube.tv', label: 'YouTube', default: true },
+          { package: 'com.android.vending', label: 'Play Store', default: false }
+        ]);
+      },
+      getOverrides: function () { return '{}'; },
+      getLayout: function () { return window.__layout || '{}'; },
+      setLayout: function (json) { window.__layout = json; },
+      setOverrides: function () {},
+      getTheme: function () { return 'glass'; },
+      getSetting: function (key) { return window['__s_' + key] || ''; },
+      setSetting: function (key, value) { window['__s_' + key] = value; },
+      setTheme: function () {},
+      scanBloat: function () {
+        return JSON.stringify(devBloat);
+      },
+      cleanBloat: function (action, pkg) {
+        setTimeout(function () {
+          var n = 0;
+          devBloat.forEach(function (a) {
+            if ((!pkg || a.package === pkg) && a.state === (action === 'disable' ? 'active' : 'disabled')) {
+              a.state = action === 'disable' ? 'disabled' : 'active';
+              n++;
+            }
+          });
+          onCleanDone({ action: action, done: n, failed: [] });
+        }, 600);
+      },
+      launch: function () {}
+    };
+  }
+
+  var ROTATE_EVERY_MS = 30 * 1000;   // rythme commun : image de fond (thèmes à image) et mot doux (Mots doux)
+
+  // Papiers peints en 1920x1080, embarqués dans l'appli (themes/).
+  var THEMES = [
+    { id: 'glass', name: 'Par défaut', logo: 'themes/logo-glass.png' },
+    { id: 'classique', name: 'Cartes', logo: 'themes/logo-default.png' },
+    { id: 'jinx', name: 'Jinx', photo: true, logo: 'graffiti/crane_rose.png',
+      images: ['themes/jinx-1.jpg', 'themes/jinx-2.jpg', 'themes/jinx-3.jpg', 'themes/jinx-4.jpg',
+        'themes/jinx-5.jpg', 'themes/jinx-6.jpg', 'themes/jinx-7.jpg', 'themes/jinx-8.jpg',
+        'themes/jinx-9.jpg'] },
+    { id: 'vi', name: 'Vi', photo: true, logo: 'graffiti/vi.png',
+      images: ['themes/vi-1.jpg', 'themes/vi-2.jpg', 'themes/vi-3.png', 'themes/vi-4.jpg',
+        'themes/vi-5.jpg', 'themes/vi-6.jpg'] },
+    { id: 'apple', name: 'Apple', logo: 'themes/logo-apple.png', photo: true,
+      images: ['themes/apple-1.jpg', 'themes/apple-2.jpg', 'themes/apple-3.jpg', 'themes/apple-4.jpg',
+        'themes/apple-5.jpg', 'themes/apple-6.jpg', 'themes/apple-7.jpg', 'themes/apple-8.jpg'] },
+    { id: 'babe', name: 'Mots doux', logo: 'themes/logo-babe.png', photo: true, messages: true },
+  ];
+
+  var lastMessage = '';
+  var apps = [];
+  var overrides = {};
+  var settingsOpen = false;
+  var theme = THEMES[0];
+  var rotateTimer = null;
+  var slideIndex = 0;
+  var frontWall = 'wallA';
+  var noAnim = false;       // option "Animations des thèmes" coupée (réglage conservé par l'appli)
+  var noTileAnim = false;   // option "Animations des vignettes" coupée
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  // La date est écrite sur la même largeur que l'heure.
+  function fitDate() {
+    var t = document.getElementById('time'), d = document.getElementById('date');
+    // Largeur du texte seul (scrollWidth ne descend pas sous celle de la boîte, qui suit déjà l'heure).
+    d.style.fontSize = '10px';
+    d.style.width = 'max-content';
+    d.style.minWidth = '0';
+    var w = d.offsetWidth;
+    d.style.width = '';
+    d.style.minWidth = '';
+    if (w > 0) d.style.fontSize = Math.min(10 * t.offsetWidth / w, window.innerHeight * 0.05) + 'px';
+  }
+
+  // Les polices des thèmes se chargent après le premier affichage : on recale alors la date.
+  if (document.fonts) {
+    document.fonts.ready.then(fitDate);
+    document.fonts.addEventListener('loadingdone', fitDate);
+  }
+
+  function tick() {
+    var now = new Date();
+    var timeEl = document.getElementById('time'), dateEl = document.getElementById('date');
+    var time = pad(now.getHours()) + ':' + pad(now.getMinutes());
+    var date = now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    date = date.charAt(0).toUpperCase() + date.slice(1);
+    if (timeEl.textContent === time && dateEl.textContent === date) return;
+    timeEl.textContent = time;
+    dateEl.textContent = date;
+    fitDate();
+  }
+
+  // Les mots doux : une ligne = un message (liste personnalisée de la TV, sinon liste par défaut).
+  function messageLines() {
+    var source = window.Android && Android.getMessages
+      ? Promise.resolve(Android.getMessages())
+      : fetch('messages.txt').then(function (r) { return r.text(); });
+    return source.then(function (text) {
+      return text.split('\n')
+        .map(function (l) { return l.trim(); })
+        .filter(function (l) { return l; });
+    });
+  }
+
+  function showMessage() {
+    messageLines()
+      .then(function (lines) {
+        if (!lines.length) { lastMessage = ''; document.getElementById('message').textContent = ''; return; }
+        var pick = lines[Math.floor(Math.random() * lines.length)];
+        if (lines.length > 1 && pick === lastMessage) { return showMessage(); }
+        lastMessage = pick;
+        document.getElementById('message').textContent = pick;
+      })
+      .catch(function () {});
+  }
+
+  // ---------- Thèmes et diaporama ----------
+  function showWall(src) {
+    var back = frontWall === 'wallA' ? 'wallB' : 'wallA';
+    var img = new Image();
+    img.onload = function () {
+      document.getElementById(back).style.backgroundImage = 'url("' + src + '")';
+      document.getElementById(back).className = 'wall show';
+      document.getElementById(frontWall).className = 'wall';
+      frontWall = back;
+    };
+    img.src = src;
+  }
+
+  function stopRotation() {
+    document.body.classList.remove('rotates');
+    document.getElementById('loader').classList.remove('run');
+    if (rotateTimer) { clearInterval(rotateTimer); rotateTimer = null; }
+    document.getElementById('wallA').className = 'wall';
+    document.getElementById('wallB').className = 'wall';
+  }
+
+  // L'image est tirée au hasard dans la liste, au départ puis à chaque changement (jamais deux fois la même de suite).
+  function randomOtherIndex(count, current) {
+    if (count < 2) return 0;
+    var next = Math.floor(Math.random() * (count - 1));
+    return next >= current ? next + 1 : next;
+  }
+
+  // Relance l'anneau de progression (une durée = un intervalle de rotation).
+  function restartLoader() {
+    var el = document.getElementById('loader');
+    el.style.setProperty('--rotate-ms', ROTATE_EVERY_MS + 'ms');
+    el.classList.remove('run');
+    void el.getBoundingClientRect();
+    el.classList.add('run');
+  }
+
+  // Tout ce qui change tout seul (image de fond, mot doux) suit le même rythme ; l'anneau se remplit entre deux changements.
+  // Appelée seulement s'il y a au moins deux éléments : avec un seul, rien ne change et l'anneau reste caché.
+  function startRotation(step) {
+    document.body.classList.add('rotates');
+    restartLoader();
+    rotateTimer = setInterval(function () { step(); restartLoader(); }, ROTATE_EVERY_MS);
+  }
+
+  function startSlideshow(images) {
+    slideIndex = Math.floor(Math.random() * images.length);
+    showWall(images[slideIndex]);
+    if (images.length > 1) {
+      startRotation(function () {
+        slideIndex = randomOtherIndex(images.length, slideIndex);
+        showWall(images[slideIndex]);
+      });
+    }
+  }
+
+  function startMessages() {
+    showMessage();
+    messageLines().then(function (lines) {
+      if (theme.messages && lines.length > 1) startRotation(showMessage);
+    });
+  }
+
+  // Appelé par l'appli Android quand la liste des mots doux change (page web) : on repart sur la nouvelle liste.
+  function onMessagesChanged() {
+    if (!theme.messages) return;
+    stopRotation();
+    startMessages();
+  }
+
+  // Cœurs du thème Babe : un cœur "pop" à une position, une taille et une couleur au hasard, toutes les ~0,35 à 1,2 s.
+  var heartTimer = null;
+  var HEART_COLORS = ['#ff8fc7', '#ffd0e6', '#ffffff', '#ff4f9a'];
+  var HEART_PATH = 'M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 5 6.4 5c2 0 3.6 1 5.6 3 2-2 3.6-3 5.6-3 3.4 0 5.5 3.4 4 6.8C19.5 16.4 12 21 12 21z';
+
+  function spawnHeart(still) {
+    var layer = document.getElementById('hearts');
+    var size = 3 + Math.random() * 7;
+    var heart = document.createElement('div');
+    heart.className = 'heart';
+    heart.style.left = (Math.random() * 92) + 'vw';
+    heart.style.top = (Math.random() * 80) + 'vh';
+    heart.style.width = heart.style.height = size + 'vh';
+    heart.style.color = HEART_COLORS[Math.floor(Math.random() * HEART_COLORS.length)];
+    heart.style.setProperty('--r', (Math.random() * 40 - 20).toFixed(0) + 'deg');
+    heart.innerHTML = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="' + HEART_PATH + '"/></svg>';
+    layer.appendChild(heart);
+    if (!still) setTimeout(function () { if (heart.parentNode) heart.parentNode.removeChild(heart); }, 2500);
+  }
+
+  function stopHearts() {
+    clearTimeout(heartTimer);
+    heartTimer = null;
+    document.getElementById('hearts').innerHTML = '';
+  }
+
+  function startHearts() {
+    stopHearts();
+    // Animations des thèmes coupées : quelques cœurs posés une fois pour toutes, qui ne bougent ni n'apparaissent
+    if (noAnim) { for (var i = 0; i < 14; i++) spawnHeart(true); return; }
+    (function next() {
+      spawnHeart();
+      heartTimer = setTimeout(next, 350 + Math.random() * 850);
+    })();
+  }
+
+  function applyTheme(t) {
+    theme = t;
+    document.body.setAttribute('data-theme', t.id);
+    document.body.classList.toggle('photo', !!t.photo);
+    stopRotation();
+    if (t.images) startSlideshow(t.images);
+    else if (t.messages) startMessages();
+    if (t.id === 'babe') { startHearts(); renderMessageHint(); } else stopHearts();
+    fitDate();   // la date épouse la largeur de l'heure
+    syncMusic();
+  }
+
+  function themeById(id) {
+    for (var i = 0; i < THEMES.length; i++) { if (THEMES[i].id === id) return THEMES[i]; }
+    return THEMES[0];
+  }
+
+  function pickTheme(t) {
+    applyTheme(t);
+    Android.setTheme(t.id);
+    renderApps('__settings__');   // la disposition des vignettes dépend du thème
+    closeSettings();              // choisir un thème referme les paramètres (rouverts, ils se redessinent)
+  }
+
+  function make(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  }
+
+  // Vignette d'un thème : un logo (image ou nom) sur un fond plat, juste de quoi le reconnaître.
+  function themePreview(t) {
+    var logo = make('div', 'logo');
+    logo.setAttribute('data-theme', t.id);
+    if (t.logo) {
+      var img = make('img');
+      img.src = t.logo;
+      logo.appendChild(img);
+    } else {
+      logo.appendChild(make('b', null, t.mark || t.name));
+    }
+    return logo;
+  }
+
+  // Une carte par thème : l'aperçu, le nom, une coche sur le thème actif.
+  function renderThemes(keepFocus) {
+    var list = document.getElementById('themes');
+    list.innerHTML = '';
+    THEMES.forEach(function (t) {
+      var card = make('button', 'card' + (t === theme ? ' on' : ''));
+      card.dataset.pkg = 'theme:' + t.id;
+      var thumb = make('div', 'thumb');
+      thumb.appendChild(themePreview(t));
+      thumb.appendChild(make('span', 'tick', '✓'));
+      card.appendChild(thumb);
+      card.appendChild(make('span', 'name', t.name));
+      card.onclick = function () { pickTheme(t); };
+      list.appendChild(card);
+    });
+    if (keepFocus) focusPkg(list, keepFocus);
+  }
+
+  // Interrupteurs "Animations des thèmes" et "Animations des vignettes"
+  // (activé = animations actives ; coupé = zooms et déplacements bruts, sans transition).
+  function toggleRow(pkg, label, off, flip) {
+    var row = make('button', 'toggle' + (off ? '' : ' on'));
+    row.dataset.pkg = pkg;
+    row.setAttribute('role', 'switch');
+    row.setAttribute('aria-checked', off ? 'false' : 'true');
+    var text = make('span', 'tx');
+    text.appendChild(make('b', null, label));
+    var sw = make('span', 'sw');
+    sw.appendChild(make('i'));
+    row.appendChild(text);
+    row.appendChild(sw);
+    row.onclick = function () { flip(); renderOptions(pkg); };
+    return row;
+  }
+
+  function renderOptions(keepFocus) {
+    var list = document.getElementById('options');
+    list.innerHTML = '';
+    list.appendChild(toggleRow('opt:noanim', 'Animations des thèmes', noAnim, function () {
+      noAnim = !noAnim;
+      Android.setSetting('noanim', noAnim ? '1' : '');
+      document.body.classList.toggle('noanim-theme', noAnim);
+      if (theme.id === 'babe') startHearts();   // cœurs animés <-> cœurs posés
+    }));
+    list.appendChild(toggleRow('opt:notile', 'Animations des vignettes', noTileAnim, function () {
+      noTileAnim = !noTileAnim;
+      Android.setSetting('notile', noTileAnim ? '1' : '');
+      document.body.classList.toggle('noanim-tile', noTileAnim);
+    }));
+    if (keepFocus) focusPkg(list, keepFocus);
+  }
+
+  // ---------- Nettoyage des applis préinstallées ----------
+  // Le scan compare la TV à la liste connue (assets/bloat.json) ; le bouton de confirmation désactive les
+  // applis trouvées, par l'ADB de la TV (aucune n'est supprimée : « Tout réactiver » les remet).
+  var clean = { found: null, busy: false, message: '', focus: null };
+
+  function cleanButton(pkg, label, handler) {
+    var b = make('button', 'cbtn', label);
+    b.dataset.pkg = pkg;
+    b.onclick = handler;
+    return b;
+  }
+
+  // Un interrupteur par appli : activé = l'appli est active, coupé = elle est désactivée (un clic la bascule).
+  function cleanRow(a) {
+    var on = a.state === 'active';
+    var row = make('button', 'toggle' + (on ? ' on' : ''));
+    row.dataset.pkg = a.package;
+    row.setAttribute('role', 'switch');
+    row.setAttribute('aria-checked', on ? 'true' : 'false');
+    var text = make('span', 'tx');
+    text.appendChild(make('b', null, a.name));
+    text.appendChild(make('small', null, a.group + ' : ' + a.why));
+    var sw = make('span', 'sw');
+    sw.appendChild(make('i'));
+    row.appendChild(text);
+    row.appendChild(sw);
+    row.onclick = function () { runClean(on ? 'disable' : 'enable', a.package); };
+    return row;
+  }
+
+  function renderClean(keepFocus) {
+    var box = document.getElementById('clean');
+    box.innerHTML = '';
+    var text = clean.message || (clean.found
+      ? ''
+      : "Repère les applis préinstallées inutiles (constructeur, télémétrie...) pour les désactiver. Rien n'est supprimé : tout peut être réactivé.");
+    if (clean.busy) text = "Connexion à l'ADB de la TV... Si une fenêtre s'affiche, accepte-la avec la télécommande (coche « Toujours autoriser »).";
+    if (text) box.appendChild(make('p', null, text));
+    box.appendChild(cleanButton('clean:scan', clean.found ? 'Scanner de nouveau' : 'Scanner la TV',
+      function () { if (!clean.busy) scanClean(); }));
+    if (clean.found) {
+      var active = clean.found.filter(function (a) { return a.state === 'active'; });
+      var off = clean.found.length - active.length;
+      if (!clean.found.length) box.appendChild(make('p', null, "Aucune appli de la liste connue n'a été trouvée sur cette TV."));
+      if (active.length) {
+        box.appendChild(cleanButton('clean:apply', 'Tout désactiver (' + active.length + ')',
+          function () { runClean('disable', ''); }));
+      }
+      if (off) {
+        box.appendChild(cleanButton('clean:restore', 'Tout réactiver (' + off + ')', function () { runClean('enable', ''); }));
+      }
+      clean.found.forEach(function (a) { box.appendChild(cleanRow(a)); });
+    }
+    if (keepFocus) focusPkg(box, keepFocus);
+  }
+
+  function scanClean() {
+    try { clean.found = JSON.parse(Android.scanBloat()); } catch (e) { clean.found = []; }
+    clean.message = '';
+    renderClean('clean:scan');
+  }
+
+  // pkg vide : toutes les applis concernées ; sinon une seule. Le focus revient ensuite sur la même ligne.
+  function runClean(action, pkg) {
+    if (clean.busy) return;
+    clean.busy = true;
+    clean.message = '';
+    clean.focus = pkg || 'clean:scan';
+    renderClean(clean.focus);
+    Android.cleanBloat(action, pkg);
+  }
+
+  // Rappelé par l'appli Android quand le nettoyage est fini.
+  function onCleanDone(r) {
+    clean.busy = false;
+    if (r.error) {
+      clean.message = "Impossible de joindre l'ADB de la TV (" + r.error + '). Active le débogage réseau dans les options pour développeurs.';
+    } else {
+      var n = r.done;
+      clean.message = n + (r.action === 'disable' ? (n > 1 ? ' applis désactivées.' : ' appli désactivée.')
+                                                  : (n > 1 ? ' applis réactivées.' : ' appli réactivée.'));
+      if (r.failed && r.failed.length) clean.message += ' Échec : ' + r.failed.join(', ') + '.';
+    }
+    try { clean.found = JSON.parse(Android.scanBloat()); } catch (e) {}
+    renderClean(clean.focus || 'clean:scan');
+    clean.focus = null;
+  }
+
+  function openSettings() {
+    settingsOpen = true;
+    var box = document.getElementById('gear').getBoundingClientRect();
+    var panel = document.getElementById('settings');
+    panel.style.setProperty('--gx', (box.left + box.width / 2) + 'px');
+    panel.style.setProperty('--gy', (box.top + box.height / 2) + 'px');
+    document.body.classList.add('settings-open');
+    panel.className = 'open';
+    renderAppChoices(null);
+    renderThemes('theme:' + theme.id);
+    renderOptions(null);
+    // Le résultat du scan ne survit pas à la fermeture des paramètres (sauf opération en cours).
+    if (!clean.busy) { clean.found = null; clean.message = ''; }
+    renderClean(null);
+    renderMessageInfo();
+  }
+
+  // Où modifier les mots doux : adresse de la TV sur le réseau local et code PIN.
+  function renderMessageInfo() {
+    var info = document.getElementById('msginfo');
+    try {
+      var s = JSON.parse(Android.getServerInfo());
+      info.innerHTML = s.url
+        ? 'Depuis un PC du même réseau, ouvre <b>' + s.url + '</b> : le code PIN s\'affiche ici, sur la TV, à la connexion.'
+        : 'TV non connectée au réseau local.';
+    } catch (e) { info.textContent = ''; }
+  }
+
+  // Thème Mots doux : le lien de la page d'édition, en bas à gauche.
+  function renderMessageHint() {
+    var hint = document.getElementById('msghint');
+    try {
+      var s = JSON.parse(Android.getServerInfo());
+      hint.textContent = s.url ? 'Modifier les mots doux : ' + s.url : '';
+    } catch (e) { hint.textContent = ''; }
+  }
+
+  function closeSettings() {
+    settingsOpen = false;
+    document.body.classList.remove('settings-open');
+    document.getElementById('settings').className = '';
+    document.getElementById('gear').focus();
+  }
+
+  // ---------- Applis ----------
+  // Une appli est affichée selon le choix de l'utilisateur, sinon selon sa valeur par défaut.
+  function isVisible(app) {
+    return app.package in overrides ? overrides[app.package] : app.default;
+  }
+
+  function focusedPkg() {
+    var el = document.activeElement;
+    return el && el.dataset ? el.dataset.pkg : null;
+  }
+
+  function focusPkg(container, pkg) {
+    var target = pkg && container.querySelector('[data-pkg="' + pkg + '"]');
+    target = target || container.firstChild;
+    if (target) target.focus();
+  }
+
+  // ---------- Musique d'ambiance par thème ----------
+  // Un thème peut avoir une musique (fichier dans assets/music/) : elle boucle depuis `start` (secondes, pour
+  // sauter une intro non musicale) tant que le thème est actif ET que le launcher est visible ; elle s'arrête
+  // dès qu'on lance une appli ou que l'écran de veille démarre (onLauncherPause, appelé par l'appli Android).
+  var MUSIC = {
+    jinx: { src: 'music/jinx.mp3', start: 0, volume: 0.4 },
+    vi: { src: 'music/vi.mp3', start: 0, volume: 0.4 }
+  };
+  var musicEl = null;
+  var launcherVisible = true;
+  var musicRetries = 0;   // relances de lecture après un refus (plafonnées, remises à zéro à chaque changement de thème)
+
+  function stopMusic(discard) {
+    if (musicEl) musicEl.pause();
+    if (discard) musicEl = null;
+  }
+
+  function syncMusic() {
+    var m = MUSIC[theme.id];
+    if (!m) { stopMusic(true); return; }
+    if (!musicEl) musicRetries = 0;
+    if (!launcherVisible) { stopMusic(false); return; }
+    if (!musicEl || musicEl.getAttribute('data-src') !== m.src) {
+      stopMusic(true);
+      var audio = new Audio(m.src);
+      audio.setAttribute('data-src', m.src);
+      audio.volume = m.volume;
+      audio.loop = (m.start === 0);   // départ à 0 : boucle native, sans aucun saut de lecture à gérer
+      audio.addEventListener('loadedmetadata', function () { audio.currentTime = m.start; });
+      audio.addEventListener('ended', function () { audio.currentTime = m.start; audio.play(); });
+      audio.addEventListener('error', function () {
+        console.log('musique: erreur ' + (audio.error ? audio.error.code : '?') + ' ' + m.src);
+        if (musicEl === audio) musicEl = null;   // fichier absent
+      });
+      musicEl = audio;
+    }
+    var playing = musicEl.play();
+    if (playing && playing.catch) playing.catch(function (e) {
+      console.log('musique: lecture refusée ' + e);
+      // Lecture coupée par un pause() (le launcher passait en arrière-plan) ou refusée : on réessaie, et au prochain appui de touche.
+      if (musicRetries++ < 5) setTimeout(syncMusic, 800);
+      document.addEventListener('keydown', syncMusic, { once: true });
+    });
+  }
+
+  function onLauncherPause() {
+    launcherVisible = false;
+    stopMusic(false);
+  }
+
+  // ---------- Barre de volume ----------
+  // Appelé par l'appli Android quand on appuie sur les touches de volume.
+  var volumeTimer = null;
+  function showVolume(level, max, muted) {
+    var el = document.getElementById('volume');
+    var off = muted || level === 0;
+    var pct = Math.round(level / max * 100);
+    el.className = 'show' + (off ? ' muted' : '');
+    el.querySelector('.fill').style.width = (off ? 0 : pct) + '%';
+    el.querySelector('.num').textContent = off ? '' : pct;
+    clearTimeout(volumeTimer);
+    volumeTimer = setTimeout(function () { el.className = off ? 'muted' : ''; }, 1800);
+  }
+
+  // ---------- Son de navigation ----------
+  // Petit "tic" synthétisé (deux notes très brèves), joué quand une flèche déplace la sélection.
+  var audio = null;
+  var lastArrow = 0;
+
+  function tickSound() {
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume();
+      var t = audio.currentTime;
+      [[1250, 0], [1900, 0.035]].forEach(function (n) {
+        var osc = audio.createOscillator();
+        var gain = audio.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = n[0];
+        gain.gain.setValueAtTime(0.0001, t + n[1]);
+        gain.gain.exponentialRampToValueAtTime(0.18, t + n[1] + 0.004);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + n[1] + 0.07);
+        osc.connect(gain);
+        gain.connect(audio.destination);
+        osc.start(t + n[1]);
+        osc.stop(t + n[1] + 0.08);
+      });
+    } catch (e) {}
+  }
+
+  // Seules les flèches font du bruit : pas de son quand l'écran se redessine.
+  document.addEventListener('keydown', function (e) {
+    if (e.keyCode >= 37 && e.keyCode <= 40) lastArrow = Date.now();
+  }, true);
+  document.addEventListener('focusin', function () {
+    if (Date.now() - lastArrow < 300) tickSound();
+  });
+
+  // La vignette sélectionnée se recentre à chaque déplacement (la rangée défile sous elle).
+  document.getElementById('apps').addEventListener('focusin', function (e) {
+    if (theme.id === 'classique') return;
+    var el = e.target, row = this;
+    if (theme.id === 'glass') {   // grille : on centre la ligne de la vignette sélectionnée
+      row.scrollTo({ top: el.offsetTop - (row.clientHeight - el.offsetHeight) / 2, behavior: noTileAnim ? 'auto' : 'smooth' });
+      return;
+    }
+    row.scrollTo({ left: el.offsetLeft - (row.clientWidth - el.offsetWidth) / 2, behavior: noTileAnim ? 'auto' : 'smooth' });
+  });
+
+  function renderApps(keepFocus) {
+    var container = document.getElementById('apps');
+    var wanted = keepFocus === undefined ? focusedPkg() : keepFocus;
+    container.innerHTML = '';
+    apps.filter(isVisible).forEach(function (app) {
+      var b = document.createElement('button');
+      b.className = 'app';
+      b.dataset.pkg = app.package;
+      var img = document.createElement('img');
+      img.src = '../icons/' + app.package;
+      img.alt = '';
+      b.setAttribute('aria-label', app.label);
+      b.appendChild(img);
+      b.onclick = function () { Android.launch(app.package); };
+      container.appendChild(b);
+    });
+    if (theme.id === 'classique') scatter(container);
+    // wanted commençant par "__" : le focus est sur la roue ou un bouton, on ne le déplace pas
+    if (!settingsOpen && !(wanted && wanted.indexOf('__') === 0)) focusPkg(container, wanted);
+    updateEdgeFade();
+  }
+
+  // Fondu sur les bords de la rangée, seulement du côté où d'autres vignettes continuent.
+  function updateEdgeFade() {
+    var row = document.getElementById('apps');
+    var grid = theme.id === 'glass';                       // grille : fondu haut / bas
+    var more = theme.id !== 'classique' && !grid;          // rangée : fondu gauche / droite
+    var left = more && row.scrollLeft > 4;
+    var right = more && row.scrollLeft + row.clientWidth < row.scrollWidth - 4;
+    var up = grid && row.scrollTop > 4;
+    var down = grid && row.scrollTop + row.clientHeight < row.scrollHeight - 4;
+    row.style.setProperty('--fl', left ? '10vw' : '0px');
+    row.style.setProperty('--fr', right ? '10vw' : '0px');
+    row.style.setProperty('--ft', up ? '9vh' : '0px');
+    row.style.setProperty('--fb', down ? '9vh' : '0px');
+  }
+  document.getElementById('apps').addEventListener('scroll', updateEdgeFade);
+  window.addEventListener('resize', updateEdgeFade);
+
+  // ---------- Mode normal : vignettes éparpillées ----------
+  // Aléa "graine" : la disposition ne change pas tant que la liste d'applis reste la même.
+  function seededRandom(text) {
+    var h = 1779033703 ^ text.length;
+    for (var i = 0; i < text.length; i++) {
+      h = Math.imul(h ^ text.charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    var a = h >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  // Disposition choisie avec les boutons du thème de base : éparpillée (avec une graine) ou en grille.
+  var layout = { mode: 'scatter', seed: '' };
+
+  // Grille ordonnée : 4 colonnes, vignettes droites, centrées sur l'écran, dans l'ordre de la liste.
+  function arrangeGrid(tiles) {
+    var W = 17, H = 17, GX = 4, GY = 4;                  // largeur / hauteur d'une vignette et écarts (vw / vh)
+    var cols = Math.min(4, tiles.length);
+    var rows = Math.ceil(tiles.length / cols);
+    var left0 = (100 - (cols * W + (cols - 1) * GX)) / 2;
+    var top0 = 50 - (rows * H + (rows - 1) * GY) / 2;
+    tiles.forEach(function (tile, k) {
+      tile.style.left = (left0 + (k % cols) * (W + GX)) + 'vw';
+      tile.style.top = (top0 + Math.floor(k / cols) * (H + GY)) + 'vh';
+      tile.style.zIndex = 1;
+      tile.style.setProperty('--rot', '0deg');
+    });
+  }
+
+  function saveLayout() {
+    try { Android.setLayout(JSON.stringify(layout)); } catch (e) {}
+  }
+
+  function shuffleTiles() {
+    layout = { mode: 'scatter', seed: String(Math.random()) };
+    saveLayout();
+    scatter(document.getElementById('apps'));            // on repositionne sans recréer : les vignettes glissent
+  }
+
+  function orderTiles() {
+    layout = { mode: 'grid' };
+    saveLayout();
+    scatter(document.getElementById('apps'));
+  }
+
+  function scatter(container) {
+    var tiles = Array.prototype.slice.call(container.children);
+    if (layout.mode === 'grid') { arrangeGrid(tiles); return; }
+    var rnd = seededRandom(layout.seed + '|' + tiles.map(function (t) { return t.dataset.pkg; }).join('|'));
+    var n = tiles.length;
+    var cols = Math.ceil(Math.sqrt(n * 1.5));
+    var rows = Math.ceil(n / cols);
+    var X0 = 6, X1 = 77, Y0 = 24, Y1 = 53;     // coin haut-gauche possible (vw / vh)
+    var cells = [];
+    for (var c = 0; c < cols * rows; c++) cells.push(c);
+    for (var i = cells.length - 1; i > 0; i--) {     // mélange des cases
+      var j = Math.floor(rnd() * (i + 1));
+      var tmp = cells[i]; cells[i] = cells[j]; cells[j] = tmp;
+    }
+    tiles.forEach(function (tile, k) {
+      var left = X0 + (cells[k] % cols + rnd()) * (X1 - X0) / cols;
+      var top = Y0 + (Math.floor(cells[k] / cols) + rnd()) * (Y1 - Y0) / rows;
+      var rot = (rnd() < 0.5 ? -1 : 1) * (3 + rnd() * 11);
+      tile.style.left = left + 'vw';
+      tile.style.top = top + 'vh';
+      tile.style.zIndex = 1 + Math.floor(rnd() * 10);
+      tile.style.setProperty('--rot', rot.toFixed(1) + 'deg');
+    });
+  }
+
+  // ---------- Navigation aux flèches ----------
+  // On ne laisse pas le moteur web de la TV deviner : la sélection va toujours vers l'élément voisin
+  // dans la direction de la flèche (rangée d'applis, vignettes éparpillées, cartes des paramètres),
+  // et la roue est atteinte en montant ; depuis la roue on redescend vers la dernière vignette choisie.
+  var lastTilePkg = null;
+  document.getElementById('apps').addEventListener('focusin', function (e) {
+    if (e.target.dataset && e.target.dataset.pkg) lastTilePkg = e.target.dataset.pkg;
+  });
+
+  // Les éléments sélectionnables du contexte courant (hors roue).
+  function navItems() {
+    var sel = settingsOpen ? '#themes .card, #options .toggle, #list .card, #clean .cbtn' : '#apps .app, #layoutbar button';
+    return Array.prototype.slice.call(document.querySelectorAll(sel)).filter(function (el) {
+      return el.getClientRects().length > 0;            // les boutons de disposition n'existent que dans le thème de base
+    });
+  }
+
+  function center(el) {
+    var r = el.getBoundingClientRect();
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var dir = { 37: [-1, 0], 38: [0, -1], 39: [1, 0], 40: [0, 1] }[e.keyCode];
+    if (!dir) return;
+    var gear = document.getElementById('gear');
+    var cur = document.activeElement;
+    var items = navItems();
+    if (!items.length) return;
+    e.preventDefault();
+
+    // Sélection perdue (rien n'a le focus) : on la remet sur le premier élément.
+    if (cur !== gear && items.indexOf(cur) < 0) { items[0].focus(); return; }
+
+    // Depuis la roue : rien au-dessus, sinon on entre dans la liste (dernière vignette, ou thème actif).
+    if (cur === gear) {
+      if (dir[1] === -1) return;
+      var entry = settingsOpen
+        ? document.querySelector('#themes .card.on')
+        : lastTilePkg && document.querySelector('#apps [data-pkg="' + lastTilePkg + '"]');
+      (entry || items[0]).focus();
+      return;
+    }
+
+    // Sinon : le voisin le plus proche dans la direction, de préférence bien aligné.
+    var from = center(cur), best = null, bestScore = Infinity;
+    items.forEach(function (t) {
+      if (t === cur) return;
+      var c = center(t), dx = c.x - from.x, dy = c.y - from.y;
+      var along = dx * dir[0] + dy * dir[1];
+      if (along <= 1) return;
+      var score = along + 2 * Math.abs(dir[0] ? dy : dx);
+      if (score < bestScore) { bestScore = score; best = t; }
+    });
+    if (best) best.focus();
+    else if (dir[1] === -1) gear.focus();
+  });
+
+  // Un clic sur l'engrenage ouvre les paramètres, ou les ferme s'ils sont ouverts.
+  document.getElementById('btnShuffle').onclick = shuffleTiles;
+  document.getElementById('btnOrder').onclick = orderTiles;
+
+  // Paramètres ouverts : quand la roue reprend le focus (en remontant), le contenu remonte tout en haut.
+  document.getElementById('gear').addEventListener('focus', function () {
+    if (settingsOpen) document.getElementById('panel').scrollTo({ top: 0, behavior: noTileAnim ? 'auto' : 'smooth' });
+  });
+
+  document.getElementById('gear').onclick = function () {
+    if (settingsOpen) closeSettings(); else openSettings();
+  };
+
+  // Une carte par appli (sa vignette, estompée si masquée) ; la rangée derrière se met à jour tout de suite.
+  function renderAppChoices(keepFocus) {
+    var list = document.getElementById('list');
+    list.innerHTML = '';
+    apps.forEach(function (app) {
+      var card = make('button', 'card app-card' + (isVisible(app) ? ' on' : ''));
+      card.dataset.pkg = 'app:' + app.package;
+      var thumb = make('div', 'thumb');
+      var img = make('img');
+      img.src = '../icons/' + app.package;
+      img.alt = '';
+      thumb.appendChild(img);
+      thumb.appendChild(make('span', 'tick', '✓'));
+      card.appendChild(thumb);
+      card.appendChild(make('span', 'name', app.label));
+      card.onclick = function () { toggle(app); };
+      list.appendChild(card);
+    });
+    if (keepFocus) focusPkg(list, keepFocus);
+  }
+
+  function toggle(app) {
+    overrides[app.package] = !isVisible(app);
+    Android.setOverrides(JSON.stringify(overrides));
+    renderAppChoices('app:' + app.package);
+    renderApps('__settings__');
+  }
+
+  // Appelé par l'appli Android quand quelqu'un ouvre la page des mots doux depuis le réseau : on affiche le code PIN.
+  var connTimer = null;
+  function showConnection(ip, pin) {
+    var el = document.getElementById('conn');
+    el.querySelector('.s').textContent = 'depuis ' + ip;
+    el.querySelector('.pin').textContent = pin;
+    el.className = 'show';
+    clearTimeout(connTimer);
+    connTimer = setTimeout(hideConnection, 90 * 1000);
+  }
+
+  // Appelé à la saisie du bon code (ou après un délai, ou par Retour) : la popup disparaît.
+  function hideConnection() {
+    clearTimeout(connTimer);
+    document.getElementById('conn').className = '';
+  }
+
+  // Appelé par l'appli Android quand on appuie sur Retour.
+  function onBack() {
+    if (document.getElementById('conn').className) { hideConnection(); return; }
+    if (settingsOpen) closeSettings();
+  }
+
+  function loadData() {
+    try { noAnim = !!Android.getSetting('noanim'); } catch (e) { noAnim = false; }
+    try { noTileAnim = !!Android.getSetting('notile'); } catch (e) { noTileAnim = false; }
+    document.body.classList.toggle('noanim-theme', noAnim);
+    document.body.classList.toggle('noanim-tile', noTileAnim);
+    try { overrides = JSON.parse(Android.getOverrides()); } catch (e) { overrides = {}; }
+    try { layout = JSON.parse(Android.getLayout()); } catch (e) { layout = {}; }
+    if (layout.mode !== 'grid') layout = { mode: 'scatter', seed: layout.seed || '' };
+    apps = JSON.parse(Android.getApps());
+  }
+
+  // Appelé par l'appli Android au retour sur l'accueil.
+  function refresh() {
+    launcherVisible = true;
+    syncMusic();
+    tick();
+    loadData();
+    if (!settingsOpen) renderApps();
+    showMessage();
+  }
+
+  // ?theme=jinx dans l'URL force un thème (aperçu dans un navigateur).
+  var forced = (location.search.match(/theme=([a-z]+)/) || [])[1];
+  applyTheme(themeById(forced || Android.getTheme()));
+  tick();
+  setInterval(tick, 1000);
+  loadData();
+  renderApps(null);
+  showMessage();
+</script>
+</body>
+</html>

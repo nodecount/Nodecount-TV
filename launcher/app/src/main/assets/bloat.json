@@ -1,0 +1,22 @@
+[
+  { "package": "com.tcl.bi", "name": "TCL Statistiques", "group": "Télémétrie et rapports", "why": "Mesure l'usage de la TV pour le constructeur" },
+  { "package": "com.google.android.feedback", "name": "Retours Google", "group": "Télémétrie et rapports", "why": "Envoie des retours et rapports à Google" },
+  { "package": "com.google.android.tv.bugreportsender", "name": "Rapports de bugs", "group": "Télémétrie et rapports", "why": "Envoie des rapports de bugs" },
+  { "package": "com.tcl.usercenter", "name": "Compte TCL", "group": "Constructeur (TCL)", "why": "Compte utilisateur du constructeur" },
+  { "package": "com.tcl.useragreement", "name": "Conditions d'utilisation TCL", "group": "Constructeur (TCL)", "why": "Affiche les accords du constructeur" },
+  { "package": "com.tcl.appmarket2", "name": "Boutique TCL", "group": "Constructeur (TCL)", "why": "Boutique d'applications du constructeur" },
+  { "package": "com.tcl.smartalexa", "name": "Alexa TCL", "group": "Constructeur (TCL)", "why": "Assistant vocal du constructeur" },
+  { "package": "com.tcl.assistant", "name": "Assistant TCL", "group": "Constructeur (TCL)", "why": "Assistant du constructeur" },
+  { "package": "com.tcl.MultiScreenInteraction_TV", "name": "Multi-écrans TCL", "group": "Constructeur (TCL)", "why": "Partage d'écran avec l'appli mobile du constructeur" },
+  { "package": "com.tcl.showmode", "name": "Mode démonstration", "group": "Constructeur (TCL)", "why": "Mode démo pour les magasins" },
+  { "package": "com.tcl.esticker", "name": "Autocollants TCL", "group": "Constructeur (TCL)", "why": "Composant préinstallé par le constructeur" },
+  { "package": "com.tcl.factory.view", "name": "Outil d'usine", "group": "Constructeur (TCL)", "why": "Outil de test utilisé en usine" },
+  { "package": "com.tcl.copydatatotv", "name": "Copie de données TCL", "group": "Constructeur (TCL)", "why": "Transfert de données du constructeur" },
+  { "package": "com.tcl.notereminder", "name": "Rappels TCL", "group": "Constructeur (TCL)", "why": "Notes et rappels du constructeur" },
+  { "package": "com.tcl.keyhelp", "name": "Aide des touches TCL", "group": "Constructeur (TCL)", "why": "Aide sur les touches de la télécommande" },
+  { "package": "com.google.android.music", "name": "Google Play Musique", "group": "Google", "why": "Service arrêté depuis longtemps" },
+  { "package": "com.google.android.play.games", "name": "Play Jeux", "group": "Google", "why": "Services de jeux Google" },
+  { "package": "com.google.android.videos", "name": "Google TV (films)", "group": "Google", "why": "Boutique de films et séries de Google" },
+  { "package": "tv.wuaki.apptv", "name": "Rakuten TV", "group": "Services de tiers", "why": "Service de vidéo préinstallé" },
+  { "package": "com.google.android.marvin.talkback", "name": "TalkBack", "group": "Accessibilité", "why": "Lecteur d'écran : à garder si tu en as besoin" }
+]

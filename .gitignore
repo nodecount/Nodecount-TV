@@ -1,0 +1,20 @@
+# Build Android / Gradle
+launcher/build/
+launcher/app/build/
+launcher/.gradle/
+launcher/local.properties
+*.apk
+*.aab
+
+# IDE
+.idea/
+*.iml
+
+# Mots doux personnalisés (fichier propre à la TV, jamais versionné)
+messages-custom.txt
+**/messages-custom.txt
+
+# Signature release (jamais versionné)
+keystore.properties
+*.jks
+.kotlin/
