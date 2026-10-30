@@ -143,4 +143,4 @@ Le code est une appli Android en Kotlin qui affiche une interface web (`launcher
 
 ## Visuels et droits
 
-Le code est de Nodecount. Les thèmes reprennent des univers de tiers (graffitis Arcane, fonds d'écran, logos d'applications, musiques) qui appartiennent à leurs ayants droit : ils sont fournis pour un usage personnel et non commercial.
+Le code est publié sous licence MIT (voir le fichier [LICENSE](LICENSE)). Elle ne couvre pas les visuels et les musiques. Les thèmes reprennent en effet des univers de tiers (graffitis Arcane, fonds d'écran, logos d'applications, musiques) qui appartiennent à leurs ayants droit : ils sont fournis pour un usage personnel et non commercial.
